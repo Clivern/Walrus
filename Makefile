@@ -6,7 +6,7 @@ HUGO ?= hugo
 
 help: Makefile
 	@echo
-	@echo " Choose a command run in Penguin:"
+	@echo " Choose a command run in Walrus:"
 	@echo
 	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
 	@echo
