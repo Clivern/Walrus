@@ -1,5 +1,8 @@
 GO           ?= go
 GOFMT        ?= $(GO)fmt
+NPM          ?= npm
+NPX          ?= npx
+RHINO        ?= rhino
 pkgs          = ./...
 HUGO ?= hugo
 
@@ -90,6 +93,31 @@ coverage:
 ## ci: Run all CI tests.
 ci: style check_license test vet lint
 	@echo "\n==> All quality checks passed"
+
+
+## serve_ui: Serve admin dashboard
+serve_ui:
+	cd web;$(NPM) run serve
+
+
+## build_ui: Builds admin dashboard for production
+build_ui:
+	cd web;$(NPM) run build
+
+
+## check_ui_format: Check dashboard code format
+check_ui_format:
+	cd web;$(NPX) prettier  --check .
+
+
+## format_ui: Format dashboard code
+format_ui:
+	cd web;$(NPX) prettier  --write .
+
+
+## api_mock: API mock server
+api_mock:
+	$(RHINO) serve -c mocks/.rhino.json
 
 
 ## run: Run the service

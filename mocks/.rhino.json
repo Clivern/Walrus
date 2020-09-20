@@ -1,0 +1,94 @@
+{
+    "app": {
+        "mode": "prod",
+        "port": "8000",
+        "domain": "http://127.0.0.1:8000",
+        "tls": {
+            "status": "off",
+            "pemPath": "/cert/server.pem",
+            "keyPath": "/cert/server.key"
+        }
+    },
+    "mock": [
+        {
+            "path": "/_ready",
+            "request": {
+                "method": "get",
+                "parameters": {}
+            },
+            "response": {
+                "statusCode": 200,
+                "headers": [
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": "@json:@config_dir/ready.endpoint.json"
+            },
+            "chaos": {
+                "latency": "0s",
+                "failRate": "0%"
+            }
+        },
+        {
+            "path": "/info",
+            "request": {
+                "method": "get",
+                "parameters": {}
+            },
+            "response": {
+                "statusCode": 200,
+                "headers": [
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": "@json:@config_dir/info.endpoint.json"
+            },
+            "chaos": {
+                "latency": "0s",
+                "failRate": "0%"
+            }
+        },
+        {
+            "path": "/auth",
+            "request": {
+                "method": "post",
+                "parameters": {}
+            },
+            "response": {
+                "statusCode": 200,
+                "headers": [
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": "{\"key\":\"value\"}"
+            },
+            "chaos": {
+                "latency": "0s",
+                "failRate": "0%"
+            }
+        },
+        {
+            "path": "/setup",
+            "request": {
+                "method": "post",
+                "parameters": {}
+            },
+            "response": {
+                "statusCode": 200,
+                "headers": [
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": "{\"key\":\"value\"}"
+            },
+            "chaos": {
+                "latency": "0s",
+                "failRate": "0%"
+            }
+        }
+    ],
+    "debug": [
+
+    ],
+    "log": {
+        "level": "info",
+        "output": "stdout",
+        "format": "json"
+    }
+}

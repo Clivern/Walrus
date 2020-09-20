@@ -1,0 +1,116 @@
+# Role is either server or agent
+role: server
+
+# Server configs
+server:
+    # Env mode (dev or prod)
+    mode: ${WALRUS_APP_MODE:-dev}
+    # HTTP port
+    port: ${WALRUS_API_PORT:-8080}
+    # TLS configs
+    tls:
+        status: ${WALRUS_API_TLS_STATUS:-off}
+        pemPath: ${WALRUS_API_TLS_PEMPATH:-cert/server.pem}
+        keyPath: ${WALRUS_API_TLS_KEYPATH:-cert/server.key}
+
+    # Message Broker Configs
+    broker:
+        # Broker driver (native)
+        driver: ${WALRUS_BROKER_DRIVER:-native}
+        # Native driver configs
+        native:
+            # Queue max capacity
+            capacity: ${WALRUS_BROKER_NATIVE_CAPACITY:-5000}
+            # Number of concurrent workers
+            workers: ${WALRUS_BROKER_NATIVE_WORKERS:-4}
+
+    # API Configs
+    api:
+        key: ${WALRUS_API_KEY:- }
+
+    # Runtime, Requests/Response and Walrus Metrics
+    metrics:
+        prometheus:
+            # Route for the metrics endpoint
+            endpoint: ${WALRUS_METRICS_PROM_ENDPOINT:-/metrics}
+
+    # Application Database
+    database:
+        # Database driver (sqlite3, mysql)
+        driver: ${WALRUS_DATABASE_DRIVER:-sqlite3}
+        # Hostname
+        host: ${WALRUS_DATABASE_MYSQL_HOST:-localhost}
+        # Port
+        port: ${WALRUS_DATABASE_MYSQL_PORT:-3306}
+        # Database
+        name: ${WALRUS_DATABASE_MYSQL_DATABASE:-walrus.db}
+        # Username
+        username: ${WALRUS_DATABASE_MYSQL_USERNAME:-root}
+        # Password
+        password: ${WALRUS_DATABASE_MYSQL_PASSWORD:-root}
+
+    # Log configs
+    log:
+        # Log level, it can be debug, info, warn, error, panic, fatal
+        level: ${WALRUS_LOG_LEVEL:-info}
+        # output can be stdout or abs path to log file /var/logs/walrus.log
+        output: ${WALRUS_LOG_OUTPUT:-stdout}
+        # Format can be json
+        format: ${WALRUS_LOG_FORMAT:-json}
+
+# Agent configs
+agent:
+    # Env mode (dev or prod)
+    mode: ${WALRUS_APP_MODE:-dev}
+    # HTTP port
+    port: ${WALRUS_API_PORT:-8080}
+    # TLS configs
+    tls:
+        status: ${WALRUS_API_TLS_STATUS:-off}
+        pemPath: ${WALRUS_API_TLS_PEMPATH:-cert/server.pem}
+        keyPath: ${WALRUS_API_TLS_KEYPATH:-cert/server.key}
+
+    # Message Broker Configs
+    broker:
+        # Broker driver (native)
+        driver: ${WALRUS_BROKER_DRIVER:-native}
+        # Native driver configs
+        native:
+            # Queue max capacity
+            capacity: ${WALRUS_BROKER_NATIVE_CAPACITY:-5000}
+            # Number of concurrent workers
+            workers: ${WALRUS_BROKER_NATIVE_WORKERS:-4}
+
+    # API Configs
+    api:
+        key: ${WALRUS_API_KEY:- }
+
+    # Runtime, Requests/Response and Walrus Metrics
+    metrics:
+        prometheus:
+            # Route for the metrics endpoint
+            endpoint: ${WALRUS_METRICS_PROM_ENDPOINT:-/metrics}
+
+    # Application Database
+    database:
+        # Database driver (sqlite3, mysql)
+        driver: ${WALRUS_DATABASE_DRIVER:-sqlite3}
+        # Hostname
+        host: ${WALRUS_DATABASE_MYSQL_HOST:-localhost}
+        # Port
+        port: ${WALRUS_DATABASE_MYSQL_PORT:-3306}
+        # Database
+        name: ${WALRUS_DATABASE_MYSQL_DATABASE:-walrus.db}
+        # Username
+        username: ${WALRUS_DATABASE_MYSQL_USERNAME:-root}
+        # Password
+        password: ${WALRUS_DATABASE_MYSQL_PASSWORD:-root}
+
+    # Log configs
+    log:
+        # Log level, it can be debug, info, warn, error, panic, fatal
+        level: ${WALRUS_LOG_LEVEL:-info}
+        # output can be stdout or abs path to log file /var/logs/walrus.log
+        output: ${WALRUS_LOG_OUTPUT:-stdout}
+        # Format can be json
+        format: ${WALRUS_LOG_FORMAT:-json}

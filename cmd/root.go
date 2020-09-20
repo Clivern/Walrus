@@ -8,37 +8,17 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/clivern/walrus/core/util"
-
 	"github.com/spf13/cobra"
 )
 
-// Verbose var
-var Verbose bool
-
-// Config var
-var Config string
-
-// ConfigFilePath var
-const ConfigFilePath = "walrus.toml"
+var config string
 
 var rootCmd = &cobra.Command{
 	Use: "walrus",
-	Short: `🔥 A fast and beautiful terminal recorder
+	Short: `🔥 Launch Databases and Services in a Click with Walrus
 
 If you have any suggestions, bug reports, or annoyances please report
 them to our issue tracker at <https://github.com/clivern/walrus/issues>`,
-}
-
-func init() {
-	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVarP(
-		&Config,
-		"config",
-		"c",
-		fmt.Sprintf("%s%s", util.EnsureTrailingSlash(os.Getenv("HOME")), ConfigFilePath),
-		"config file",
-	)
 }
 
 // Execute runs cmd tool

@@ -21,3 +21,14 @@ func TestInArray(t *testing.T) {
 		pkg.Expect(t, InArray(9, []int{2, 3, 1}), false)
 	})
 }
+
+// TestEncryption test cases
+func TestEncryption(t *testing.T) {
+	// TestEncryption
+	t.Run("TestEncryption", func(t *testing.T) {
+		ciphertext, err := Encrypt([]byte("Hello World"), "password")
+		plaintext, err := Decrypt(ciphertext, "password")
+		pkg.Expect(t, "Hello World", string(plaintext))
+		pkg.Expect(t, err, nil)
+	})
+}
