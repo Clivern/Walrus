@@ -4,6 +4,7 @@ NPM          ?= npm
 NPX          ?= npx
 RHINO        ?= rhino
 pkgs          = ./...
+PKGER        ?= pkger
 HUGO ?= hugo
 
 
@@ -90,39 +91,60 @@ coverage:
 	go tool cover -html=cover.out -o coverage.html
 
 
-## ci: Run all CI tests.
-ci: style check_license test vet lint
-	@echo "\n==> All quality checks passed"
-
-
 ## serve_ui: Serve admin dashboard
 serve_ui:
+	@echo ">> ============= Run Vuejs App ============= <<"
 	cd web;$(NPM) run serve
 
 
 ## build_ui: Builds admin dashboard for production
 build_ui:
+	@echo ">> ============= Build Vuejs App ============= <<"
 	cd web;$(NPM) run build
 
 
 ## check_ui_format: Check dashboard code format
 check_ui_format:
+	@echo ">> ============= Validate js format ============= <<"
 	cd web;$(NPX) prettier  --check .
 
 
 ## format_ui: Format dashboard code
 format_ui:
+	@echo ">> ============= Format js Code ============= <<"
 	cd web;$(NPX) prettier  --write .
 
 
 ## api_mock: API mock server
 api_mock:
+	@echo ">> ============= Mock Server ============= <<"
 	$(RHINO) serve -c mocks/.rhino.json
 
 
-## run: Run the service
-run:
-	$(GO) run walrus.go
+## package: Package assets
+package:
+	@echo ">> ============= Package Assets ============= <<"
+	echo "VUE_APP_TOWER_URL=" > $(shell pwd)/web/.env.dist
+	cd web;$(NPM) run build
+	$(PKGER) list -include $(shell pwd)/web/dist
+	$(PKGER) -o cmd
+
+
+## run_tower: Run the tower
+run_tower:
+	@echo ">> ============= Run Tower ============= <<"
+	$(GO) run walrus.go tower -c config.dist.yml
+
+
+## run_agent: Run the agent
+run_agent:
+	@echo ">> ============= Run Agent ============= <<"
+	$(GO) run walrus.go agent -c config.dist.yml
+
+
+## ci: Run all CI tests.
+ci: style check_license test vet lint
+	@echo "\n==> All quality checks passed"
 
 
 .PHONY: help

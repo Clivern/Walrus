@@ -4,7 +4,12 @@ import axios from "axios";
 
 const ApiService = {
 	getURL(endpoint) {
-		return process.env.VUE_APP_TOWER_URL.replace(/\/$/, "") + endpoint;
+		let apiUrl = "";
+		if (process.env.VUE_APP_TOWER_URL) {
+			apiUrl = process.env.VUE_APP_TOWER_URL.replace(/\/$/, "");
+		}
+
+		return apiUrl + endpoint;
 	},
 
 	getHeaders() {

@@ -29,7 +29,7 @@ $ curl -sL https://github.com/Clivern/Walrus/releases/download/x.x.x/walrus_x.x.
 ```
 
 
-#### To run walrus as a tower:
+#### Run Walrus Tower:
 
 Create the tower configs file `tower.config.yml` from `config.dist.yml`. Something like the following:
 
@@ -39,23 +39,14 @@ tower:
     # Env mode (dev or prod)
     mode: ${WALRUS_APP_MODE:-dev}
     # HTTP port
-    port: ${WALRUS_API_PORT:-8080}
+    port: ${WALRUS_API_PORT:-8000}
+    # URL
+    url: ${WALRUS_API_URL:-http://127.0.0.1:8000}
     # TLS configs
     tls:
         status: ${WALRUS_API_TLS_STATUS:-off}
         pemPath: ${WALRUS_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${WALRUS_API_TLS_KEYPATH:-cert/server.key}
-
-    # Message Broker Configs
-    broker:
-        # Broker driver (native)
-        driver: ${WALRUS_BROKER_DRIVER:-native}
-        # Native driver configs
-        native:
-            # Queue max capacity
-            capacity: ${WALRUS_BROKER_NATIVE_CAPACITY:-5000}
-            # Number of concurrent workers
-            workers: ${WALRUS_BROKER_NATIVE_WORKERS:-4}
 
     # API Configs
     api:
@@ -100,7 +91,7 @@ walrus tower -c /path/to/tower.config.yml
 ```
 
 
-#### To run walrus as an agent:
+#### Run Walrus Agent:
 
 Create the agent configs file `agent.config.yml` from `config.dist.yml`. Something like the following:
 
@@ -110,7 +101,9 @@ agent:
     # Env mode (dev or prod)
     mode: ${WALRUS_APP_MODE:-dev}
     # HTTP port
-    port: ${WALRUS_API_PORT:-8081}
+    port: ${WALRUS_API_PORT:-8001}
+    # URL
+    url: ${WALRUS_API_URL:-http://127.0.0.1:8001}
     # TLS configs
     tls:
         status: ${WALRUS_API_TLS_STATUS:-off}
@@ -130,17 +123,13 @@ agent:
 
     # Tower Configs
     tower:
-        url: ${WALRUS_TOWER_URL:-http://127.0.0.1:8080}
-
+        url: ${WALRUS_TOWER_URL:-http://127.0.0.1:8000}
         # This must match the one defined in tower config file
         apiKey: ${WALRUS_TOWER_API_KEY:- }
-
         # This must match the one defined in tower config file
         encryptionKey: ${WALRUS_ENCRYPTION_KEY:- }
-
-    # API Configs
-    api:
-        key: ${WALRUS_API_KEY:- }
+        # Time interval between agent ping checks
+        pingInterval: ${WALRUS_CHECK_INTERVAL:-60}
 
     # Log configs
     log:
@@ -159,9 +148,9 @@ walrus agent -c /path/to/agent.config.yml
 ```
 
 
-#### To run the admin dashboard:
+#### To run the Admin Dashboard (Development Only):
 
-Clone the project:
+Clone the project or your own fork:
 
 ```zsh
 $ git clone https://github.com/Clivern/Walrus.git
@@ -176,9 +165,20 @@ VUE_APP_TOWER_URL=http://localhost:8080
 Then you can either build or run the dashboard
 
 ```zsh
+# Install npm packages
+$ cd web
+$ npm install
+
+# Run Vuejs app
 $ make serve_ui
 
+# Build Vuejs app
 $ make build_ui
+
+# Any changes to the dashboard, must be reflected to cmd/pkged.go
+# You can use these commands to do so
+$ go get github.com/markbates/pkger/cmd/pkger
+$ make package
 ```
 
 

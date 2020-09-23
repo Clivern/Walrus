@@ -6,29 +6,22 @@ package model
 
 import (
 	"encoding/json"
-	"time"
 )
 
-// Agent struct
-type Agent struct {
-	ID        int        `json:"id"`
-	UUID      string     `json:"uuid"`
-	Name      string     `json:"name"`
-	Status    string     `json:"status"`
-	URL       string     `json:"url"`
-	LastCheck *time.Time `json:"last_check"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+// Option struct
+type Option struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
-// Agents struct
-type Agents struct {
-	Agents []Agent `json:"agents"`
+// Options struct
+type Options struct {
+	Options []Option `json:"agents"`
 }
 
 // LoadFromJSON update object from json
-func (a *Agent) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &a)
+func (o *Option) LoadFromJSON(data []byte) (bool, error) {
+	err := json.Unmarshal(data, &o)
 	if err != nil {
 		return false, err
 	}
@@ -36,8 +29,8 @@ func (a *Agent) LoadFromJSON(data []byte) (bool, error) {
 }
 
 // ConvertToJSON convert object to json
-func (a *Agent) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&a)
+func (o *Option) ConvertToJSON() (string, error) {
+	data, err := json.Marshal(&o)
 	if err != nil {
 		return "", err
 	}
@@ -45,8 +38,8 @@ func (a *Agent) ConvertToJSON() (string, error) {
 }
 
 // LoadFromJSON update object from json
-func (a *Agents) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &a)
+func (o *Options) LoadFromJSON(data []byte) (bool, error) {
+	err := json.Unmarshal(data, &o)
 	if err != nil {
 		return false, err
 	}
@@ -54,8 +47,8 @@ func (a *Agents) LoadFromJSON(data []byte) (bool, error) {
 }
 
 // ConvertToJSON convert object to json
-func (a *Agents) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&a)
+func (o *Options) ConvertToJSON() (string, error) {
+	data, err := json.Marshal(&o)
 	if err != nil {
 		return "", err
 	}

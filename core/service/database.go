@@ -99,20 +99,20 @@ func (db *Database) AutoConnect() error {
 // Migrate migrates the database
 func (db *Database) Migrate() bool {
 	status := true
-	db.Connection.AutoMigrate(&migration.Job{}, &migration.Agent{}, &migration.Host{})
+	db.Connection.AutoMigrate(&migration.Job{}, &migration.Host{}, &migration.Option{})
 	status = status && db.Connection.HasTable(&migration.Job{})
-	status = status && db.Connection.HasTable(&migration.Agent{})
 	status = status && db.Connection.HasTable(&migration.Host{})
+	status = status && db.Connection.HasTable(&migration.Option{})
 	return status
 }
 
 // Rollback drop tables
 func (db *Database) Rollback() bool {
 	status := true
-	db.Connection.DropTableIfExists(&migration.Job{}, &migration.Agent{}, &migration.Host{})
+	db.Connection.DropTableIfExists(&migration.Job{}, &migration.Host{}, &migration.Option{})
 	status = status && !db.Connection.HasTable(&migration.Job{})
-	status = status && !db.Connection.HasTable(&migration.Agent{})
 	status = status && !db.Connection.HasTable(&migration.Host{})
+	status = status && !db.Connection.HasTable(&migration.Option{})
 	return status
 }
 
@@ -205,28 +205,28 @@ func (db *Database) UpdateJobByID(job *model.Job) {
 	db.Connection.Save(&job)
 }
 
-// CreateHost creates a new service
-func (db *Database) CreateHost(service *model.Host) *model.Host {
-	db.Connection.Create(service)
-	return service
+// CreateHost creates a new host
+func (db *Database) CreateHost(host *model.Host) *model.Host {
+	db.Connection.Create(host)
+	return host
 }
 
-// HostExistByID check if service exists
+// HostExistByID check if host exists
 func (db *Database) HostExistByID(id int) bool {
-	service := model.Host{}
+	host := model.Host{}
 
-	db.Connection.Where("id = ?", id).First(&service)
+	db.Connection.Where("id = ?", id).First(&host)
 
-	return service.ID > 0
+	return host.ID > 0
 }
 
-// GetHostByID gets a service by id
+// GetHostByID gets a host by id
 func (db *Database) GetHostByID(id int) model.Host {
-	service := model.Host{}
+	host := model.Host{}
 
-	db.Connection.Where("id = ?", id).First(&service)
+	db.Connection.Where("id = ?", id).First(&host)
 
-	return service
+	return host
 }
 
 // GetHosts gets services
@@ -238,103 +238,37 @@ func (db *Database) GetHosts() []model.Host {
 	return services
 }
 
-// HostExistByUUID check if service exists
+// HostExistByUUID check if host exists
 func (db *Database) HostExistByUUID(uuid string) bool {
-	service := model.Host{}
+	host := model.Host{}
 
-	db.Connection.Where("uuid = ?", uuid).First(&service)
+	db.Connection.Where("uuid = ?", uuid).First(&host)
 
-	return service.ID > 0
+	return host.ID > 0
 }
 
-// GetHostByUUID gets a service by uuid
+// GetHostByUUID gets a host by uuid
 func (db *Database) GetHostByUUID(uuid string) model.Host {
-	service := model.Host{}
+	host := model.Host{}
 
-	db.Connection.Where("uuid = ?", uuid).First(&service)
+	db.Connection.Where("uuid = ?", uuid).First(&host)
 
-	return service
+	return host
 }
 
-// DeleteHostByID deletes a service by id
+// DeleteHostByID deletes a host by id
 func (db *Database) DeleteHostByID(id int) {
 	db.Connection.Unscoped().Where("id=?", id).Delete(&migration.Host{})
 }
 
-// DeleteHostByUUID deletes a service by uuid
+// DeleteHostByUUID deletes a host by uuid
 func (db *Database) DeleteHostByUUID(uuid string) {
 	db.Connection.Unscoped().Where("uuid=?", uuid).Delete(&migration.Host{})
 }
 
-// UpdateHostByID updates a service by ID
-func (db *Database) UpdateHostByID(service *model.Host) {
-	db.Connection.Save(&service)
-}
-
-// CreateAgent creates a new agent
-func (db *Database) CreateAgent(agent *model.Agent) *model.Agent {
-	db.Connection.Create(agent)
-	return agent
-}
-
-// AgentExistByID check if agent exists
-func (db *Database) AgentExistByID(id int) bool {
-	agent := model.Agent{}
-
-	db.Connection.Where("id = ?", id).First(&agent)
-
-	return agent.ID > 0
-}
-
-// GetAgentByID gets a agent by id
-func (db *Database) GetAgentByID(id int) model.Agent {
-	agent := model.Agent{}
-
-	db.Connection.Where("id = ?", id).First(&agent)
-
-	return agent
-}
-
-// GetAgents gets agents
-func (db *Database) GetAgents() []model.Agent {
-	agents := []model.Agent{}
-
-	db.Connection.Select("*").Find(&agents)
-
-	return agents
-}
-
-// AgentExistByUUID check if agent exists
-func (db *Database) AgentExistByUUID(uuid string) bool {
-	agent := model.Agent{}
-
-	db.Connection.Where("uuid = ?", uuid).First(&agent)
-
-	return agent.ID > 0
-}
-
-// GetAgentByUUID gets a agent by uuid
-func (db *Database) GetAgentByUUID(uuid string) model.Agent {
-	agent := model.Agent{}
-
-	db.Connection.Where("uuid = ?", uuid).First(&agent)
-
-	return agent
-}
-
-// DeleteAgentByID deletes a agent by id
-func (db *Database) DeleteAgentByID(id int) {
-	db.Connection.Unscoped().Where("id=?", id).Delete(&migration.Agent{})
-}
-
-// DeleteAgentByUUID deletes a agent by uuid
-func (db *Database) DeleteAgentByUUID(uuid string) {
-	db.Connection.Unscoped().Where("uuid=?", uuid).Delete(&migration.Agent{})
-}
-
-// UpdateAgentByID updates a agent by ID
-func (db *Database) UpdateAgentByID(agent *model.Agent) {
-	db.Connection.Save(&agent)
+// UpdateHostByID updates a host by ID
+func (db *Database) UpdateHostByID(host *model.Host) {
+	db.Connection.Save(&host)
 }
 
 // Close closes MySQL database connection

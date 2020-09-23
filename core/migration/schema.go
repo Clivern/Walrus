@@ -23,36 +23,29 @@ type Option struct {
 type Job struct {
 	gorm.Model
 
-	UUID    string    `json:"uuid"`
-	Payload string    `json:"payload"`
-	Status  string    `json:"status"`
-	Type    string    `json:"type"`
-	Result  string    `json:"result"`
-	Retry   int       `json:"retry"`
-	Parent  int       `json:"parent"`
-	RunAt   time.Time `json:"run_at"`
-}
-
-// Agent struct
-type Agent struct {
-	gorm.Model
-
 	UUID      string    `json:"uuid"`
-	Name      string    `json:"name"`
+	Payload   string    `json:"payload"`
 	Status    string    `json:"status"`
-	URL       string    `json:"url"`
-	LastCheck time.Time `json:"last_check"`
+	Type      string    `json:"type"`
+	Result    string    `json:"result"`
+	Retry     int       `json:"retry"`
+	Parent    int       `json:"parent"`
+	HostRefer uint      `json:"host_refer"`
+	RunAt     time.Time `json:"run_at"`
 }
 
 // Host struct
 type Host struct {
 	gorm.Model
 
-	UUID      string    `json:"uuid"`
-	Configs   string    `json:"configs"`
-	Status    string    `json:"status"`
-	Type      string    `json:"type"`
-	DestroyAt time.Time `json:"destroy_at"`
+	Name            string    `json:"name"`
+	UUID            string    `json:"uuid"`
+	Configs         string    `json:"configs"`
+	RetentionPolicy string    `json:"retention_policy"`
+	StorageID       string    `json:"storage_id"`
+	Status          string    `json:"status"`
+	Jobs            []Job     `gorm:"foreignKey:HostRefer;constraint:OnDelete:CASCADE" json:"jobs"`
+	LastCheck       time.Time `json:"last_check"`
 }
 
 // LoadFromJSON update object from json
@@ -85,24 +78,6 @@ func (j *Job) LoadFromJSON(data []byte) (bool, error) {
 // ConvertToJSON convert object to json
 func (j *Job) ConvertToJSON() (string, error) {
 	data, err := json.Marshal(&j)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (a *Agent) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &a)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (a *Agent) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&a)
 	if err != nil {
 		return "", err
 	}

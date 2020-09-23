@@ -7,15 +7,20 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/clivern/walrus/core/controller/agent"
+	"github.com/clivern/walrus/core/middleware"
 	"github.com/clivern/walrus/core/service"
 
 	"github.com/drone/envsubst"
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -86,9 +91,11 @@ var agentCmd = &cobra.Command{
 		}
 
 		if viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))) == "stdout" {
+			gin.DefaultWriter = os.Stdout
 			log.SetOutput(os.Stdout)
 		} else {
 			f, _ := os.Create(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
+			gin.DefaultWriter = io.MultiWriter(f)
 			log.SetOutput(f)
 		}
 
@@ -101,6 +108,12 @@ var agentCmd = &cobra.Command{
 
 		log.SetLevel(level)
 
+		if viper.GetString(fmt.Sprintf("%s.app.mode", viper.GetString("role"))) == "prod" {
+			gin.SetMode(gin.ReleaseMode)
+			gin.DefaultWriter = ioutil.Discard
+			gin.DisableConsoleColor()
+		}
+
 		if viper.GetString(fmt.Sprintf("%s.log.format", viper.GetString("role"))) == "json" {
 			log.SetFormatter(&log.JSONFormatter{})
 		} else {
@@ -111,11 +124,40 @@ var agentCmd = &cobra.Command{
 			fmt.Sprintf("%s.broker.native.capacity", viper.GetString("role")),
 		))
 
+		go agent.Heartbeat(messages)
+
 		for i := 0; i < viper.GetInt(fmt.Sprintf("%s.broker.native.workers", viper.GetString("role"))); i++ {
 			go agent.Worker(i+1, messages)
 		}
 
-		agent.Heartbeat(messages)
+		r := gin.Default()
+
+		r.Use(middleware.Correlation())
+		r.Use(middleware.Logger())
+
+		r.GET("/favicon.ico", func(c *gin.Context) {
+			c.String(http.StatusNoContent, "")
+		})
+
+		r.GET("/", agent.Health)
+
+		var runerr error
+
+		if viper.GetBool(fmt.Sprintf("%s.tls.status", viper.GetString("role"))) {
+			runerr = r.RunTLS(
+				fmt.Sprintf(":%s", strconv.Itoa(viper.GetInt(fmt.Sprintf("%s.port", viper.GetString("role"))))),
+				viper.GetString(fmt.Sprintf("%s.tls.pemPath", viper.GetString("role"))),
+				viper.GetString(fmt.Sprintf("%s.tls.keyPath", viper.GetString("role"))),
+			)
+		} else {
+			runerr = r.Run(
+				fmt.Sprintf(":%s", strconv.Itoa(viper.GetInt(fmt.Sprintf("%s.port", viper.GetString("role"))))),
+			)
+		}
+
+		if runerr != nil {
+			panic(runerr.Error())
+		}
 	},
 }
 

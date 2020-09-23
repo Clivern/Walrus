@@ -21,6 +21,7 @@ import (
 
 	"github.com/drone/envsubst"
 	"github.com/gin-gonic/gin"
+	"github.com/markbates/pkger"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -141,7 +142,12 @@ var towerCmd = &cobra.Command{
 
 		r.Use(middleware.Correlation())
 		r.Use(middleware.Auth())
-		r.Use(middleware.Cors())
+
+		// Allow CORS only for development
+		if viper.GetString(fmt.Sprintf("%s.app.mode", viper.GetString("role"))) == "dev" {
+			r.Use(middleware.Cors())
+		}
+
 		r.Use(middleware.Logger())
 		r.Use(middleware.Metric())
 
@@ -149,7 +155,7 @@ var towerCmd = &cobra.Command{
 			c.String(http.StatusNoContent, "")
 		})
 
-		r.GET("/", tower.Health)
+		r.GET("/", tower.Home)
 		r.GET("/_health", tower.Health)
 		r.GET("/_ready", tower.Ready)
 
@@ -157,6 +163,8 @@ var towerCmd = &cobra.Command{
 			viper.GetString(fmt.Sprintf("%s.metrics.prometheus.endpoint", viper.GetString("role"))),
 			gin.WrapH(tower.Metrics()),
 		)
+
+		r.NoRoute(gin.WrapH(http.FileServer(pkger.Dir("/web/dist"))))
 
 		r.GET("/info", tower.Info)
 		r.POST("/setup", tower.Setup)

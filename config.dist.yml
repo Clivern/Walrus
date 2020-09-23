@@ -4,6 +4,8 @@ tower:
     mode: ${WALRUS_APP_MODE:-dev}
     # HTTP port
     port: ${WALRUS_API_PORT:-8000}
+    # URL
+    url: ${WALRUS_API_URL:-http://127.0.0.1:8000}
     # TLS configs
     tls:
         status: ${WALRUS_API_TLS_STATUS:-off}
@@ -49,6 +51,15 @@ tower:
 agent:
     # Env mode (dev or prod)
     mode: ${WALRUS_APP_MODE:-dev}
+    # HTTP port
+    port: ${WALRUS_API_PORT:-8001}
+    # URL
+    url: ${WALRUS_API_URL:-http://127.0.0.1:8001}
+    # TLS configs
+    tls:
+        status: ${WALRUS_API_TLS_STATUS:-off}
+        pemPath: ${WALRUS_API_TLS_PEMPATH:-cert/server.pem}
+        keyPath: ${WALRUS_API_TLS_KEYPATH:-cert/server.key}
 
     # Message Broker Configs
     broker:
@@ -63,13 +74,13 @@ agent:
 
     # Tower Configs
     tower:
-        url: ${WALRUS_TOWER_URL:-http://127.0.0.1:8080}
-
+        url: ${WALRUS_TOWER_URL:-http://127.0.0.1:8000}
         # This must match the one defined in tower config file
         apiKey: ${WALRUS_TOWER_API_KEY:- }
-
         # This must match the one defined in tower config file
         encryptionKey: ${WALRUS_ENCRYPTION_KEY:- }
+        # Time interval between agent ping checks
+        pingInterval: ${WALRUS_CHECK_INTERVAL:-60}
 
     # Log configs
     log:
