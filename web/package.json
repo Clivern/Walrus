@@ -12,7 +12,7 @@
 		"buefy": "0.9.3",
 		"core-js": "3.6.5",
 		"vue": "2.6.12",
-		"vue-router": "3.4.4",
+		"vue-router": "3.4.5",
 		"vuex": "3.5.1"
 	},
 	"devDependencies": {
@@ -21,8 +21,8 @@
 		"@vue/cli-plugin-router": "4.5.6",
 		"@vue/cli-service": "4.5.6",
 		"babel-eslint": "10.1.0",
-		"eslint": "7.9.0",
-		"eslint-plugin-vue": "6.2.2",
+		"eslint": "7.10.0",
+		"eslint-plugin-vue": "7.0.0",
 		"prettier": "2.1.2",
 		"vue-template-compiler": "2.6.12"
 	},

@@ -3,21 +3,21 @@
 import ApiService from "./api.service.js";
 
 const setupAction = (email, password) => {
-	return ApiService.post("/setup", {
+	return ApiService.post("/action/setup", {
 		email: email,
 		password: password,
 	});
 };
 
 const authAction = (email, password) => {
-	return ApiService.post("/auth", {
+	return ApiService.post("/action/auth", {
 		email: email,
 		password: password,
 	});
 };
 
 const fetchInfo = () => {
-	return ApiService.get("/info");
+	return ApiService.get("/action/info");
 };
 
 export { setupAction, authAction, fetchInfo };

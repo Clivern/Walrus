@@ -10,13 +10,14 @@ import (
 
 // Option struct
 type Option struct {
+	ID    int    `json:"id"`
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
 
 // Options struct
 type Options struct {
-	Options []Option `json:"agents"`
+	Options []Option `json:"options"`
 }
 
 // LoadFromJSON update object from json

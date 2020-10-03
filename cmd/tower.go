@@ -166,29 +166,35 @@ var towerCmd = &cobra.Command{
 
 		r.NoRoute(gin.WrapH(http.FileServer(pkger.Dir("/web/dist"))))
 
-		r.GET("/info", tower.Info)
-		r.POST("/setup", tower.Setup)
-		r.POST("/auth", tower.Auth)
+		action := r.Group("/action")
+		{
+			action.GET("/info", tower.Info)
+			action.POST("/setup", tower.Setup)
+			action.POST("/auth", tower.Auth)
+		}
 
-		r.GET("/api/v1/jobs", tower.GetJobs)
-		r.GET("/api/v1/jobs/:jobId", tower.GetJob)
-		r.DELETE("/api/v1/jobs/:jobId", tower.DeleteJob)
+		apiv1 := r.Group("/api/v1")
+		{
+			apiv1.GET("/jobs", tower.GetJobs)
+			apiv1.GET("/jobs/:jobId", tower.GetJob)
+			apiv1.DELETE("/jobs/:jobId", tower.DeleteJob)
 
-		// These endpoints accept only encrypted data
-		r.POST("/api/v1/agent/heartbeat", tower.AgentsHeartbeat)
-		r.POST("/api/v1/agent/postback", tower.AgentsPostback)
+			// These endpoints accept only encrypted data
+			apiv1.POST("/agent/heartbeat", tower.AgentsHeartbeat)
+			apiv1.POST("/agent/postback", tower.AgentsPostback)
 
-		r.GET("/api/v1/hosts", tower.GetHosts)
-		r.GET("/api/v1/hosts/:hostId", tower.GetHost)
-		r.PUT("/api/v1/hosts/:hostId", tower.UpdateHost)
-		r.DELETE("/api/v1/hosts/:hostId", tower.DeleteHost)
+			apiv1.GET("/hosts", tower.GetHosts)
+			apiv1.GET("/hosts/:hostId", tower.GetHost)
+			apiv1.PUT("/hosts/:hostId", tower.UpdateHost)
+			apiv1.DELETE("/hosts/:hostId", tower.DeleteHost)
 
-		r.GET("/api/v1/hosts/:hostId/backups", tower.GetHostBackups)
-		r.GET("/api/v1/hosts/:hostId/backups/:backupId", tower.GetBackup)
-		r.DELETE("/api/v1/hosts/:hostId/backups/:backupId", tower.DeleteBackup)
+			apiv1.GET("/hosts/:hostId/backups", tower.GetHostBackups)
+			apiv1.GET("/hosts/:hostId/backups/:backupId", tower.GetBackup)
+			apiv1.DELETE("/hosts/:hostId/backups/:backupId", tower.DeleteBackup)
 
-		r.GET("/api/v1/settings", tower.GetSettings)
-		r.PUT("/api/v1/settings", tower.UpdateSettings)
+			apiv1.GET("/settings", tower.GetSettings)
+			apiv1.PUT("/settings", tower.UpdateSettings)
+		}
 
 		var runerr error
 

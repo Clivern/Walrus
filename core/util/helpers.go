@@ -235,6 +235,7 @@ func Decrypt(data []byte, passphrase string) ([]byte, error) {
 	return result, nil
 }
 
+// createHash creates a hash
 func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))

@@ -26,13 +26,13 @@ tower:
     # Application Database
     database:
         # Database driver (sqlite3, mysql)
-        driver: ${WALRUS_DATABASE_DRIVER:-sqlite3}
+        driver: ${WALRUS_DATABASE_DRIVER:-mysql}
         # Hostname
         host: ${WALRUS_DATABASE_MYSQL_HOST:-localhost}
         # Port
         port: ${WALRUS_DATABASE_MYSQL_PORT:-3306}
         # Database
-        name: ${WALRUS_DATABASE_MYSQL_DATABASE:-walrus.db}
+        name: ${WALRUS_DATABASE_MYSQL_DATABASE:-walrus}
         # Username
         username: ${WALRUS_DATABASE_MYSQL_USERNAME:-root}
         # Password

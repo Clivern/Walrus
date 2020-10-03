@@ -21,9 +21,6 @@ var (
 
 	// JobOnHold on hold job type
 	JobOnHold = "on_hold"
-
-	// JobSandboxDeploy deploy
-	JobSandboxDeploy = "sandbox.deploy"
 )
 
 // Job struct

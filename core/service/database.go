@@ -99,20 +99,34 @@ func (db *Database) AutoConnect() error {
 // Migrate migrates the database
 func (db *Database) Migrate() bool {
 	status := true
-	db.Connection.AutoMigrate(&migration.Job{}, &migration.Host{}, &migration.Option{})
+	db.Connection.AutoMigrate(
+		&migration.Job{},
+		&migration.Host{},
+		&migration.Option{},
+		&migration.HostMeta{},
+	)
+
 	status = status && db.Connection.HasTable(&migration.Job{})
 	status = status && db.Connection.HasTable(&migration.Host{})
 	status = status && db.Connection.HasTable(&migration.Option{})
+	status = status && db.Connection.HasTable(&migration.HostMeta{})
 	return status
 }
 
 // Rollback drop tables
 func (db *Database) Rollback() bool {
 	status := true
-	db.Connection.DropTableIfExists(&migration.Job{}, &migration.Host{}, &migration.Option{})
+	db.Connection.DropTableIfExists(
+		&migration.Job{},
+		&migration.Host{},
+		&migration.Option{},
+		&migration.HostMeta{},
+	)
+
 	status = status && !db.Connection.HasTable(&migration.Job{})
 	status = status && !db.Connection.HasTable(&migration.Host{})
 	status = status && !db.Connection.HasTable(&migration.Option{})
+	status = status && !db.Connection.HasTable(&migration.HostMeta{})
 	return status
 }
 
@@ -259,16 +273,88 @@ func (db *Database) GetHostByUUID(uuid string) model.Host {
 // DeleteHostByID deletes a host by id
 func (db *Database) DeleteHostByID(id int) {
 	db.Connection.Unscoped().Where("id=?", id).Delete(&migration.Host{})
+	db.Connection.Unscoped().Where("host_id=?", id).Delete(&migration.Job{})
+	db.Connection.Unscoped().Where("host_id=?", id).Delete(&migration.HostMeta{})
 }
 
 // DeleteHostByUUID deletes a host by uuid
 func (db *Database) DeleteHostByUUID(uuid string) {
-	db.Connection.Unscoped().Where("uuid=?", uuid).Delete(&migration.Host{})
+	host := db.GetHostByUUID(uuid)
+
+	if host.ID > 0 {
+		db.DeleteHostByID(host.ID)
+	}
 }
 
 // UpdateHostByID updates a host by ID
 func (db *Database) UpdateHostByID(host *model.Host) {
 	db.Connection.Save(&host)
+}
+
+// CreateOption creates a new option
+func (db *Database) CreateOption(option *model.Option) *model.Option {
+	db.Connection.Create(option)
+	return option
+}
+
+// OptionExistByID check if option exists
+func (db *Database) OptionExistByID(id int) bool {
+	option := model.Option{}
+
+	db.Connection.Where("id = ?", id).First(&option)
+
+	return option.ID > 0
+}
+
+// OptionExistByKey check if an option exists
+func (db *Database) OptionExistByKey(key string) bool {
+	option := model.Option{}
+
+	db.Connection.Where("key = ?", key).First(&option)
+
+	return option.ID > 0
+}
+
+// GetOptionByID gets an option by id
+func (db *Database) GetOptionByID(id int) model.Option {
+	option := model.Option{}
+
+	db.Connection.Where("id = ?", id).First(&option)
+
+	return option
+}
+
+// GetOptionByKey gets an option by key
+func (db *Database) GetOptionByKey(key string) model.Option {
+	option := model.Option{}
+
+	db.Connection.Where("key = ?", key).First(&option)
+
+	return option
+}
+
+// GetOptions gets options
+func (db *Database) GetOptions() []model.Option {
+	options := []model.Option{}
+
+	db.Connection.Select("*").Find(&options)
+
+	return options
+}
+
+// DeleteOptionByID deletes an option by id
+func (db *Database) DeleteOptionByID(id int) {
+	db.Connection.Unscoped().Where("id=?", id).Delete(&migration.Option{})
+}
+
+// DeleteOptionByKey deletes an option by key
+func (db *Database) DeleteOptionByKey(key string) {
+	db.Connection.Unscoped().Where("key=?", key).Delete(&migration.Option{})
+}
+
+// UpdateOptionByID updates an option by ID
+func (db *Database) UpdateOptionByID(option *model.Option) {
+	db.Connection.Save(&option)
 }
 
 // Close closes MySQL database connection
