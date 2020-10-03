@@ -39,7 +39,7 @@
 				>
 			</template>
 		</div>
-		<router-view @refreshState="refreshState" />
+		<router-view @refresh-state="refreshState" />
 	</div>
 </template>
 
