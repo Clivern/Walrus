@@ -55,6 +55,15 @@ type HostMeta struct {
 	Value  string `json:"value"`
 }
 
+// User struct
+type User struct {
+	gorm.Model
+
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	LastLogin time.Time `json:"last_login"`
+}
+
 // LoadFromJSON update object from json
 func (o *Option) LoadFromJSON(data []byte) (bool, error) {
 	err := json.Unmarshal(data, &o)
@@ -121,6 +130,24 @@ func (h *HostMeta) LoadFromJSON(data []byte) (bool, error) {
 // ConvertToJSON convert object to json
 func (h *HostMeta) ConvertToJSON() (string, error) {
 	data, err := json.Marshal(&h)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+// LoadFromJSON update object from json
+func (o *User) LoadFromJSON(data []byte) (bool, error) {
+	err := json.Unmarshal(data, &o)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// ConvertToJSON convert object to json
+func (o *User) ConvertToJSON() (string, error) {
+	data, err := json.Marshal(&o)
 	if err != nil {
 		return "", err
 	}

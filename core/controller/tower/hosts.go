@@ -78,9 +78,6 @@ func GetHost(c *gin.Context) {
 		"id":        serv.ID,
 		"uuid":      serv.UUID,
 		"status":    serv.Status,
-		"type":      serv.Type,
-		"destroyAt": serv.DestroyAt,
-		"configs":   serv.Configs,
 		"createdAt": serv.CreatedAt,
 		"updatedAt": serv.UpdatedAt,
 	})
