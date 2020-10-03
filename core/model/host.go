@@ -5,7 +5,6 @@
 package model
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -25,40 +24,4 @@ type Host struct {
 // Hosts struct
 type Hosts struct {
 	Hosts []Host `json:"hosts"`
-}
-
-// LoadFromJSON update object from json
-func (s *Host) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &s)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (s *Host) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&s)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (s *Hosts) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &s)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (s *Hosts) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&s)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
 }

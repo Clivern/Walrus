@@ -5,7 +5,6 @@
 package model
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -22,40 +21,4 @@ type HostMeta struct {
 // HostMetas struct
 type HostMetas struct {
 	HostMetas []HostMeta `json:"hosts"`
-}
-
-// LoadFromJSON update object from json
-func (h *HostMeta) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &h)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (h *HostMeta) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&h)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (h *HostMetas) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &h)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (h *HostMetas) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&h)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
 }

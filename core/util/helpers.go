@@ -78,15 +78,6 @@ func Unset(a []string, i int) []string {
 	return a[:len(a)-1]
 }
 
-// ConvertToJSON convert object to json
-func ConvertToJSON(val interface{}) (string, error) {
-	data, err := json.Marshal(val)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
 // EnsureTrailingSlash ensure there is a trailing slash
 func EnsureTrailingSlash(dir string) string {
 	return fmt.Sprintf(
@@ -240,4 +231,22 @@ func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
 	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+// LoadFromJSON update object from json
+func LoadFromJSON(item interface{}, data []byte) (bool, error) {
+	err := json.Unmarshal(data, &item)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// ConvertToJSON convert object to json
+func ConvertToJSON(item interface{}) (string, error) {
+	data, err := json.Marshal(&item)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }

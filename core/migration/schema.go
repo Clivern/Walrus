@@ -5,7 +5,6 @@
 package migration
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -62,94 +61,4 @@ type User struct {
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	LastLogin time.Time `json:"last_login"`
-}
-
-// LoadFromJSON update object from json
-func (o *Option) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &o)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (o *Option) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&o)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (j *Job) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &j)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (j *Job) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&j)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (h *Host) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &h)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (h *Host) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&h)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (h *HostMeta) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &h)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (h *HostMeta) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&h)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (o *User) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &o)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (o *User) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&o)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
 }

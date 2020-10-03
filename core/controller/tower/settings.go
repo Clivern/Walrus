@@ -10,6 +10,7 @@ import (
 
 	"github.com/clivern/walrus/core/model"
 	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/util"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -46,7 +47,7 @@ func UpdateSettings(c *gin.Context) {
 
 	x, _ := ioutil.ReadAll(c.Request.Body)
 
-	options.LoadFromJSON(x)
+	util.LoadFromJSON(&options, x)
 
 	err := db.AutoConnect()
 

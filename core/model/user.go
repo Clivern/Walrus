@@ -5,7 +5,6 @@
 package model
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -20,40 +19,4 @@ type User struct {
 // Users struct
 type Users struct {
 	Users []User `json:"users"`
-}
-
-// LoadFromJSON update object from json
-func (u *User) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &u)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (u *User) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&u)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// LoadFromJSON update object from json
-func (u *Users) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &u)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (u *Users) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&u)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
 }
