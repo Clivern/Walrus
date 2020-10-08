@@ -22,7 +22,7 @@ type Option struct {
 type User struct {
 	gorm.Model
 
-	Role     string    `json:"role"`
+	Role      string    `json:"role"`
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	LastLogin time.Time `json:"last_login"`

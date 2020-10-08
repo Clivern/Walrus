@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/clivern/walrus/core/model"
 	"github.com/clivern/walrus/core/service"
 	"github.com/clivern/walrus/core/util"
 
@@ -39,10 +38,6 @@ func Setup(c *gin.Context) {
 	}
 
 	defer db.Close()
-
-	request["email"]
-	request["password"]
-
 
 	c.Status(http.StatusOK)
 	return
