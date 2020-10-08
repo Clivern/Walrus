@@ -18,6 +18,16 @@ type Option struct {
 	Value string `json:"value"`
 }
 
+// User struct
+type User struct {
+	gorm.Model
+
+	Role     string    `json:"role"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	LastLogin time.Time `json:"last_login"`
+}
+
 // Job struct
 type Job struct {
 	gorm.Model
@@ -52,13 +62,4 @@ type HostMeta struct {
 	HostID int    `json:"host_id"`
 	Key    string `json:"key"`
 	Value  string `json:"value"`
-}
-
-// User struct
-type User struct {
-	gorm.Model
-
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	LastLogin time.Time `json:"last_login"`
 }

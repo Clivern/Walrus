@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // InArray check if value is on array
@@ -249,4 +250,24 @@ func ConvertToJSON(item interface{}) (string, error) {
 		return "", err
 	}
 	return string(data), nil
+}
+
+// HashPassword hashes the password
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword(
+		[]byte(password),
+		14,
+	)
+
+	return string(bytes), err
+}
+
+// CheckPasswordHash validate password with a hash
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword(
+		[]byte(hash),
+		[]byte(password),
+	)
+
+	return err == nil
 }

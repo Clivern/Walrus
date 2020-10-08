@@ -45,9 +45,9 @@ func UpdateSettings(c *gin.Context) {
 
 	db := service.Database{}
 
-	x, _ := ioutil.ReadAll(c.Request.Body)
+	data, _ := ioutil.ReadAll(c.Request.Body)
 
-	util.LoadFromJSON(&options, x)
+	util.LoadFromJSON(&options, data)
 
 	err := db.AutoConnect()
 

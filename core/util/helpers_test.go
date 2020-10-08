@@ -32,3 +32,14 @@ func TestEncryption(t *testing.T) {
 		pkg.Expect(t, err, nil)
 	})
 }
+
+// TestHashing test cases
+func TestHashing(t *testing.T) {
+	// TestHashing
+	t.Run("TestHashing", func(t *testing.T) {
+		hash, err := HashPassword("password")
+		pkg.Expect(t, true, CheckPasswordHash("password", hash))
+		pkg.Expect(t, false, CheckPasswordHash("PasSword", hash))
+		pkg.Expect(t, err, nil)
+	})
+}

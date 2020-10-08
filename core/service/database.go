@@ -357,6 +357,31 @@ func (db *Database) UpdateOptionByID(option *model.Option) {
 	db.Connection.Save(&option)
 }
 
+// CreateUser creates a new user
+func (db *Database) CreateUser(user *model.User) *model.User {
+	db.Connection.Create(user)
+
+	return user
+}
+
+// GetUsers gets users
+func (db *Database) GetUsers() []model.User {
+	users := []model.User{}
+
+	db.Connection.Select("*").Find(&users)
+
+	return users
+}
+
+// GetUserByEmail gets a user by email
+func (db *Database) GetUserByEmail(email string) model.User {
+	user := model.User{}
+
+	db.Connection.Where("email = ?", email).First(&user)
+
+	return user
+}
+
 // Close closes MySQL database connection
 func (db *Database) Close() error {
 	return db.Connection.Close()

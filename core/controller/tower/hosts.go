@@ -33,7 +33,7 @@ func GetHosts(c *gin.Context) {
 	defer db.Close()
 
 	c.JSON(http.StatusOK, gin.H{
-		"services": db.GetHosts(),
+		"hosts": db.GetHosts(),
 	})
 }
 
@@ -57,9 +57,9 @@ func GetHost(c *gin.Context) {
 
 	defer db.Close()
 
-	serv := db.GetHostByUUID(uuid)
+	host := db.GetHostByUUID(uuid)
 
-	if serv.ID < 1 {
+	if host.ID < 1 {
 		log.WithFields(log.Fields{
 			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
 			"service_uuid":   uuid,
@@ -72,14 +72,14 @@ func GetHost(c *gin.Context) {
 	log.WithFields(log.Fields{
 		"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
 		"service_uuid":   uuid,
-	}).Info(`Retrieve a service`)
+	}).Info(`Retrieve a host`)
 
 	c.JSON(http.StatusOK, gin.H{
-		"id":        serv.ID,
-		"uuid":      serv.UUID,
-		"status":    serv.Status,
-		"createdAt": serv.CreatedAt,
-		"updatedAt": serv.UpdatedAt,
+		"id":        host.ID,
+		"uuid":      host.UUID,
+		"status":    host.Status,
+		"createdAt": host.CreatedAt,
+		"updatedAt": host.UpdatedAt,
 	})
 }
 
@@ -103,9 +103,9 @@ func DeleteHost(c *gin.Context) {
 
 	defer db.Close()
 
-	serv := db.GetHostByUUID(uuid)
+	host := db.GetHostByUUID(uuid)
 
-	if serv.ID < 1 {
+	if host.ID < 1 {
 		log.WithFields(log.Fields{
 			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
 			"service_uuid":   uuid,
@@ -118,9 +118,9 @@ func DeleteHost(c *gin.Context) {
 	log.WithFields(log.Fields{
 		"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
 		"service_uuid":   uuid,
-	}).Info(`Deleting a service`)
+	}).Info(`Deleting a host`)
 
-	db.DeleteHostByID(serv.ID)
+	db.DeleteHostByID(host.ID)
 
 	c.Status(http.StatusNoContent)
 	return
