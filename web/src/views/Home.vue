@@ -74,7 +74,7 @@ export default {
 	},
 
 	mounted() {
-		this.$emit("refreshState");
+		this.$emit("refresh-state");
 
 		this.$store.dispatch("tower/fetchTowerReadiness").then(
 			() => {

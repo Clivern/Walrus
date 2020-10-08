@@ -5,7 +5,6 @@
 package model
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -34,22 +33,4 @@ func (d *DSN) ToString() string {
 
 	// sqlite3 by default
 	return d.Name
-}
-
-// LoadFromJSON update object from json
-func (d *DSN) LoadFromJSON(data []byte) (bool, error) {
-	err := json.Unmarshal(data, &d)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// ConvertToJSON convert object to json
-func (d *DSN) ConvertToJSON() (string, error) {
-	data, err := json.Marshal(&d)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
 }

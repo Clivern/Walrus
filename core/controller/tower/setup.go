@@ -5,13 +5,40 @@
 package tower
 
 import (
+	"io/ioutil"
 	"net/http"
 
+	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/util"
+
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 // Setup controller
 func Setup(c *gin.Context) {
-	c.Status(http.StatusAccepted)
+	request := make(map[string]string)
+
+	db := service.Database{}
+
+	data, _ := ioutil.ReadAll(c.Request.Body)
+
+	util.LoadFromJSON(&request, data)
+
+	err := db.AutoConnect()
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"error":          err.Error(),
+		}).Error(`Failure while connecting database`)
+
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	defer db.Close()
+
+	c.Status(http.StatusOK)
 	return
 }

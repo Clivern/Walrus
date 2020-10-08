@@ -29,7 +29,7 @@
             }
         },
         {
-            "path": "/info",
+            "path": "/action/info",
             "request": {
                 "method": "get",
                 "parameters": {}
@@ -47,7 +47,7 @@
             }
         },
         {
-            "path": "/auth",
+            "path": "/action/auth",
             "request": {
                 "method": "post",
                 "parameters": {}
@@ -65,7 +65,7 @@
             }
         },
         {
-            "path": "/setup",
+            "path": "/action/setup",
             "request": {
                 "method": "post",
                 "parameters": {}

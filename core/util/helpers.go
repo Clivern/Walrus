@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // InArray check if value is on array
@@ -76,15 +77,6 @@ func Unset(a []string, i int) []string {
 	a[i] = a[len(a)-1]
 	a[len(a)-1] = ""
 	return a[:len(a)-1]
-}
-
-// ConvertToJSON convert object to json
-func ConvertToJSON(val interface{}) (string, error) {
-	data, err := json.Marshal(val)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
 }
 
 // EnsureTrailingSlash ensure there is a trailing slash
@@ -235,8 +227,47 @@ func Decrypt(data []byte, passphrase string) ([]byte, error) {
 	return result, nil
 }
 
+// createHash creates a hash
 func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
 	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+// LoadFromJSON update object from json
+func LoadFromJSON(item interface{}, data []byte) (bool, error) {
+	err := json.Unmarshal(data, &item)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// ConvertToJSON convert object to json
+func ConvertToJSON(item interface{}) (string, error) {
+	data, err := json.Marshal(&item)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+// HashPassword hashes the password
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword(
+		[]byte(password),
+		14,
+	)
+
+	return string(bytes), err
+}
+
+// CheckPasswordHash validate password with a hash
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword(
+		[]byte(hash),
+		[]byte(password),
+	)
+
+	return err == nil
 }

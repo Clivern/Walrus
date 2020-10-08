@@ -5,19 +5,64 @@
 package tower
 
 import (
+	"io/ioutil"
 	"net/http"
 
+	"github.com/clivern/walrus/core/model"
+	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/util"
+
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 // GetSettings controller
 func GetSettings(c *gin.Context) {
-	c.Status(http.StatusAccepted)
-	return
+	db := service.Database{}
+
+	err := db.AutoConnect()
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"error":          err.Error(),
+		}).Error(`Failure while connecting database`)
+
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	defer db.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"options": db.GetOptions(),
+	})
 }
 
 // UpdateSettings controller
 func UpdateSettings(c *gin.Context) {
-	c.Status(http.StatusAccepted)
+	var options model.Options
+
+	db := service.Database{}
+
+	data, _ := ioutil.ReadAll(c.Request.Body)
+
+	util.LoadFromJSON(&options, data)
+
+	err := db.AutoConnect()
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"error":          err.Error(),
+		}).Error(`Failure while connecting database`)
+
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	defer db.Close()
+
+	c.Status(http.StatusOK)
 	return
 }

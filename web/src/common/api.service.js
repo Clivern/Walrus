@@ -4,12 +4,13 @@ import axios from "axios";
 
 const ApiService = {
 	getURL(endpoint) {
-		let apiUrl = "";
+		let apiURL = "";
+
 		if (process.env.VUE_APP_TOWER_URL) {
-			apiUrl = process.env.VUE_APP_TOWER_URL.replace(/\/$/, "");
+			apiURL = process.env.VUE_APP_TOWER_URL.replace(/\/$/, "");
 		}
 
-		return apiUrl + endpoint;
+		return apiURL + endpoint;
 	},
 
 	getHeaders() {
@@ -23,6 +24,7 @@ const ApiService = {
 			crossdomain: true,
 			headers: {
 				"x-api-key": apiKey,
+				"X-Requested-With": "XMLHttpRequest",
 				"Content-Type": "application/json",
 			},
 		};
