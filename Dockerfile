@@ -1,4 +1,4 @@
-FROM golang:1.15.2
+FROM golang:1.15.3
 
 ARG WALRUS_VERSION=0.1.0
 
