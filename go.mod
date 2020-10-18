@@ -13,5 +13,5 @@ require (
 	github.com/spf13/cobra v1.1.0
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.5.1 // indirect
-	golang.org/x/crypto v0.0.0-20201012173705-84dcc777aaee
+	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 )
