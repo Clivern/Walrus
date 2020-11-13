@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/model"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -16,7 +16,7 @@ import (
 
 // GetHosts controller
 func GetHosts(c *gin.Context) {
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 
@@ -41,7 +41,7 @@ func GetHosts(c *gin.Context) {
 func GetHost(c *gin.Context) {
 	uuid := c.Param("hostId")
 
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 
@@ -87,7 +87,7 @@ func GetHost(c *gin.Context) {
 func DeleteHost(c *gin.Context) {
 	uuid := c.Param("hostId")
 
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 

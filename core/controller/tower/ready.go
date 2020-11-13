@@ -7,7 +7,7 @@ package tower
 import (
 	"net/http"
 
-	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/model"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -17,7 +17,7 @@ import (
 func Ready(c *gin.Context) {
 	status := "up"
 
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 

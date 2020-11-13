@@ -1,6 +1,6 @@
 module github.com/clivern/walrus
 
-go 1.14
+go 1.15
 
 require (
 	github.com/drone/envsubst v1.0.2
@@ -12,6 +12,5 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.5.1 // indirect
-	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
+	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9
 )

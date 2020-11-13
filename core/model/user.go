@@ -21,3 +21,28 @@ type User struct {
 type Users struct {
 	Users []User `json:"users"`
 }
+
+// CreateUser creates a new user
+func (db *Database) CreateUser(user *User) *User {
+	db.Connection.Create(user)
+
+	return user
+}
+
+// GetUsers gets users
+func (db *Database) GetUsers() []User {
+	users := []User{}
+
+	db.Connection.Select("*").Find(&users)
+
+	return users
+}
+
+// GetUserByEmail gets a user by email
+func (db *Database) GetUserByEmail(email string) User {
+	user := User{}
+
+	db.Connection.Where("email = ?", email).First(&user)
+
+	return user
+}

@@ -3,7 +3,8 @@
     <h3 align="center">Walrus</h3>
     <p align="center">Fast, Secure and Reliable System Backup, Set up in Minutes.</p>
     <p align="center">
-        <a href="https://travis-ci.com/Clivern/Walrus"><img src="https://travis-ci.com/Clivern/Walrus.svg?branch=master"></a>
+        <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Build/badge.svg"></a>
+        <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg"></a>
         <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-0.0.1-red.svg"></a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Walrus"><img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=0.0.1"></a>
         <a href="https://github.com/Clivern/Walrus/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg"></a>

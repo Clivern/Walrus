@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/model"
 	"github.com/clivern/walrus/core/util"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +19,7 @@ import (
 func Setup(c *gin.Context) {
 	request := make(map[string]string)
 
-	db := service.Database{}
+	db := model.Database{}
 
 	data, _ := ioutil.ReadAll(c.Request.Body)
 

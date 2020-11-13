@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/clivern/walrus/core/model"
-	"github.com/clivern/walrus/core/service"
 	"github.com/clivern/walrus/core/util"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +17,7 @@ import (
 
 // GetSettings controller
 func GetSettings(c *gin.Context) {
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 
@@ -43,7 +42,7 @@ func GetSettings(c *gin.Context) {
 func UpdateSettings(c *gin.Context) {
 	var options model.Options
 
-	db := service.Database{}
+	db := model.Database{}
 
 	data, _ := ioutil.ReadAll(c.Request.Body)
 

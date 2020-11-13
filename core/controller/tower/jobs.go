@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/model"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -16,7 +16,7 @@ import (
 
 // GetJobs controller
 func GetJobs(c *gin.Context) {
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 
@@ -41,7 +41,7 @@ func GetJobs(c *gin.Context) {
 func GetJob(c *gin.Context) {
 	uuid := c.Param("uuid")
 
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 
@@ -89,7 +89,7 @@ func GetJob(c *gin.Context) {
 func DeleteJob(c *gin.Context) {
 	uuid := c.Param("uuid")
 
-	db := service.Database{}
+	db := model.Database{}
 
 	err := db.AutoConnect()
 

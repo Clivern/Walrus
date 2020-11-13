@@ -17,6 +17,7 @@ import (
 
 	"github.com/clivern/walrus/core/controller/tower"
 	"github.com/clivern/walrus/core/middleware"
+	"github.com/clivern/walrus/core/model"
 	"github.com/clivern/walrus/core/service"
 
 	"github.com/drone/envsubst"
@@ -122,7 +123,7 @@ var towerCmd = &cobra.Command{
 		}
 
 		// Init DB Connection
-		db := service.Database{}
+		db := model.Database{}
 		err = db.AutoConnect()
 
 		if err != nil {
