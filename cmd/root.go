@@ -15,7 +15,7 @@ var config string
 
 var rootCmd = &cobra.Command{
 	Use: "walrus",
-	Short: `🔥 Launch Databases and Services in a Click with Walrus
+	Short: `🔥 Fast, Secure and Reliable System Backup, Set up in Minutes
 
 If you have any suggestions, bug reports, or annoyances please report
 them to our issue tracker at <https://github.com/clivern/walrus/issues>`,

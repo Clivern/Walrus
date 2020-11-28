@@ -64,11 +64,10 @@ var agentCmd = &cobra.Command{
 		viper.SetDefault("role", "agent")
 
 		if viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))) != "stdout" {
-			fs := service.FileSystem{}
 			dir, _ := filepath.Split(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
 
-			if !fs.DirExists(dir) {
-				if _, err := fs.EnsureDir(dir, 777); err != nil {
+			if !service.DirExists(dir) {
+				if _, err := service.EnsureDir(dir, 777); err != nil {
 					panic(fmt.Sprintf(
 						"Directory [%s] creation failed with error: %s",
 						dir,
@@ -77,7 +76,7 @@ var agentCmd = &cobra.Command{
 				}
 			}
 
-			if !fs.FileExists(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role")))) {
+			if !service.FileExists(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role")))) {
 				f, err := os.Create(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
 				if err != nil {
 					panic(fmt.Sprintf(
