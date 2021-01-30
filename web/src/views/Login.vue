@@ -3,18 +3,31 @@
 <template>
 	<div class="columns is-mobile is-centered">
 		<div class="column is-4">
-			<b-notification
-				v-show="notification.message"
-				:type="notification.type"
-				has-icon
-				aria-close-label="Close"
-			>
-				{{ notification.message }}
-			</b-notification>
-
+			<template v-if="setup">
+				<div class="field">
+					<p class="control has-icons-left has-icons-right">
+						<input
+							class="input"
+							type="text"
+							placeholder="Name"
+							v-model="form.user_name"
+							required
+						/>
+						<span class="icon is-small is-left">
+							<i class="fas fa-user"></i>
+						</span>
+					</p>
+				</div>
+			</template>
 			<div class="field">
 				<p class="control has-icons-left has-icons-right">
-					<input class="input" type="email" placeholder="Email" />
+					<input
+						class="input"
+						type="email"
+						placeholder="Email"
+						v-model="form.user_email"
+						required
+					/>
 					<span class="icon is-small is-left">
 						<i class="fas fa-envelope"></i>
 					</span>
@@ -26,6 +39,8 @@
 						class="input"
 						type="password"
 						placeholder="Password"
+						v-model="form.user_password"
+						required
 					/>
 					<span class="icon is-small is-left">
 						<i class="fas fa-lock"></i>
@@ -35,13 +50,19 @@
 			<div class="field">
 				<p class="control">
 					<template v-if="!setup">
-						<b-button type="is-success" @click="loginEvent"
+						<b-button
+							type="submit is-danger is-light"
+							v-bind:disabled="form.button_disabled"
+							@click="loginEvent"
 							>Login</b-button
 						>
 					</template>
 					<template v-else>
-						<b-button type="is-success" @click="setupEvent"
-							>Create admin account</b-button
+						<b-button
+							type="is-danger is-light"
+							v-bind:disabled="form.button_disabled"
+							@click="setupEvent"
+							>Install Walrus</b-button
 						>
 					</template>
 				</p>
@@ -57,46 +78,86 @@ export default {
 	data() {
 		return {
 			setup: false,
-			notification: {
-				type: null,
-				message: null,
+
+			form: {
+				user_password: "",
+				user_email: "",
+				user_name: "",
+				button_disabled: false,
 			},
 		};
 	},
 
 	methods: {
 		loginEvent() {
-			console.log(this.$store.getters["auth/getAuthResult"]);
-
-			this.$store.dispatch("auth/authAction", ["email", "password"]).then(
-				() => {
-					console.log("BAM!");
-					console.log(this.getAuthResult);
-					localStorage.setItem("user_api_token", "xxxxx");
-					this.$router.push("/");
-				},
-				(err) => {
-					this.$buefy.toast.open({
-						message: err,
-						type: "is-danger",
-					});
-				}
-			);
-		},
-		setupEvent() {
-			console.log("Setup Action");
+			this.form.button_disabled = true;
 
 			this.$store
-				.dispatch("auth/setupAction", ["email", "password"])
+				.dispatch("auth/authAction", {
+					email: this.form.user_email,
+					password: this.form.user_password,
+				})
 				.then(
-					() => {
-						console.log("BAM!");
+					(response) => {
+						this.$buefy.toast.open({
+							message: "User logged in successfully",
+							type: "is-success",
+						});
+
+						localStorage.setItem("user_api_key", response.data.apiKey);
+
+						localStorage.setItem("user_email", response.data.email);
+						localStorage.setItem("user_id", response.data.id);
+						localStorage.setItem("user_name", response.data.name);
+						this.$router.push("/");
 					},
 					(err) => {
+						if (err.response.data.errorMessage) {
+							this.$buefy.toast.open({
+								message: err.response.data.errorMessage,
+								type: "is-danger",
+							});
+						} else {
+							this.$buefy.toast.open({
+								message: "Error status code: " + err.response.status,
+								type: "is-danger",
+							});
+						}
+						this.form.button_disabled = false;
+					}
+				);
+		},
+		setupEvent() {
+			this.form.button_disabled = true;
+
+			this.$store
+				.dispatch("auth/setupAction", {
+					name: this.form.user_name,
+					email: this.form.user_email,
+					password: this.form.user_password,
+				})
+				.then(
+					() => {
 						this.$buefy.toast.open({
-							message: err,
-							type: "is-danger",
+							message: "Walrus installed successfully",
+							type: "is-success",
 						});
+
+						this.$router.push("/");
+					},
+					(err) => {
+						if (err.response.data.errorMessage) {
+							this.$buefy.toast.open({
+								message: err.response.data.errorMessage,
+								type: "is-danger is-light",
+							});
+						} else {
+							this.$buefy.toast.open({
+								message: "Error status code: " + err.response.status,
+								type: "is-danger is-light",
+							});
+						}
+						this.form.button_disabled = false;
 					}
 				);
 		},
@@ -105,20 +166,21 @@ export default {
 	mounted() {
 		this.$store.dispatch("auth/fetchInfo").then(
 			() => {
-				this.setup = this.$store.getters[
-					"auth/getTowerInfo"
-				].setupStatus;
+				let info = this.$store.getters["auth/getTowerInfo"];
 
-				if (this.setup) {
-					this.notification.type = "is-info";
-					this.notification.message =
-						"Walrus admin user not created yet, Please submit your desired email and password below!";
+				if (!info.setupStatus) {
+					this.setup = true;
+
+					this.$buefy.toast.open({
+						message: "Walrus not installed yet, Please setup the application!",
+						type: "is-info is-light",
+					});
 				}
 			},
 			(err) => {
 				this.$buefy.toast.open({
-					message: err,
-					type: "is-danger",
+					message: err.response.data.errorMessage,
+					type: "is-danger is-light",
 				});
 			}
 		);

@@ -17,7 +17,9 @@ import (
 
 	"github.com/clivern/walrus/core/controller/agent"
 	"github.com/clivern/walrus/core/middleware"
+	"github.com/clivern/walrus/core/module"
 	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/util"
 
 	"github.com/drone/envsubst"
 	"github.com/gin-gonic/gin"
@@ -62,12 +64,13 @@ var agentCmd = &cobra.Command{
 		}
 
 		viper.SetDefault("role", "agent")
+		viper.SetDefault("app.name", util.GenerateUUID4())
 
 		if viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))) != "stdout" {
 			dir, _ := filepath.Split(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
 
-			if !service.DirExists(dir) {
-				if _, err := service.EnsureDir(dir, 777); err != nil {
+			if !util.DirExists(dir) {
+				if _, err := util.EnsureDir(dir, 775); err != nil {
 					panic(fmt.Sprintf(
 						"Directory [%s] creation failed with error: %s",
 						dir,
@@ -76,7 +79,7 @@ var agentCmd = &cobra.Command{
 				}
 			}
 
-			if !service.FileExists(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role")))) {
+			if !util.FileExists(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role")))) {
 				f, err := os.Create(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
 				if err != nil {
 					panic(fmt.Sprintf(
@@ -107,7 +110,7 @@ var agentCmd = &cobra.Command{
 
 		log.SetLevel(level)
 
-		if viper.GetString(fmt.Sprintf("%s.app.mode", viper.GetString("role"))) == "prod" {
+		if viper.GetString(fmt.Sprintf("%s.mode", viper.GetString("role"))) == "prod" {
 			gin.SetMode(gin.ReleaseMode)
 			gin.DefaultWriter = ioutil.Discard
 			gin.DisableConsoleColor()
@@ -119,19 +122,23 @@ var agentCmd = &cobra.Command{
 			log.SetFormatter(&log.TextFormatter{})
 		}
 
-		messages := make(chan string, viper.GetInt(
-			fmt.Sprintf("%s.broker.native.capacity", viper.GetString("role")),
-		))
+		// Bootstrap the agent
+		httpClient := service.NewHTTPClient(30)
 
-		go agent.Heartbeat(messages)
+		agentModule := module.NewAgent(httpClient)
 
-		for i := 0; i < viper.GetInt(fmt.Sprintf("%s.broker.native.workers", viper.GetString("role"))); i++ {
-			go agent.Worker(i+1, messages)
+		err = agentModule.Bootstrap()
+
+		if err != nil {
+			panic(fmt.Sprintf("Unable to register the agent: %s", err.Error()))
 		}
 
 		r := gin.Default()
+		workers := agent.NewWorkers()
 
 		r.Use(middleware.Correlation())
+		r.Use(middleware.Auth())
+		r.Use(middleware.Decrypt())
 		r.Use(middleware.Logger())
 
 		r.GET("/favicon.ico", func(c *gin.Context) {
@@ -139,6 +146,23 @@ var agentCmd = &cobra.Command{
 		})
 
 		r.GET("/", agent.Health)
+
+		r.POST("/api/v1/process", func(c *gin.Context) {
+			rawBody, err := c.GetRawData()
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status": "error",
+					"error":  "Invalid request",
+				})
+				return
+			}
+
+			workers.BroadcastRequest(c, rawBody)
+		})
+
+		go workers.NotifyTower(workers.HandleWorkload())
+		go agent.Heartbeat()
 
 		var runerr error
 

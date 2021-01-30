@@ -7,7 +7,8 @@ package tower
 import (
 	"net/http"
 
-	"github.com/clivern/walrus/core/model"
+	"github.com/clivern/walrus/core/driver"
+	"github.com/clivern/walrus/core/module"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -15,48 +16,47 @@ import (
 
 // Ready controller
 func Ready(c *gin.Context) {
-	status := "up"
+	db := driver.NewEtcdDriver()
 
-	db := model.Database{}
+	err := db.Connect()
 
-	err := db.AutoConnect()
-
-	if err != nil {
-		status = "down"
-
+	if err != nil || !db.IsConnected() {
 		log.WithFields(log.Fields{
 			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
-			"status":         status,
-			"error":          err.Error(),
-		}).Error(`Failed ready check`)
+			"status":         "NotOk",
+		}).Info(`Ready check`)
 
-		c.Status(http.StatusInternalServerError)
-		return
-	}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": "NotOk",
+		})
 
-	err = db.Ping()
-
-	if err != nil {
-		status = "down"
-
-		log.WithFields(log.Fields{
-			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
-			"status":         status,
-			"error":          err.Error(),
-		}).Error(`Failed ready check`)
-
-		c.Status(http.StatusInternalServerError)
 		return
 	}
 
 	defer db.Close()
 
+	// Check if there is a leader tower
+	tower := module.NewTower(db)
+	hasLeader, err := tower.HasLeader()
+
+	if !hasLeader || err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"status":         "NotOk",
+		}).Info(`Ready check`)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": "NotOk",
+		})
+		return
+	}
+
 	log.WithFields(log.Fields{
 		"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
-		"status":         status,
-	}).Info(`Passed ready check`)
+		"status":         "ok",
+	}).Info(`Ready check`)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": status,
+		"status": "ok",
 	})
 }

@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/clivern/walrus/core/driver"
 	"github.com/clivern/walrus/core/model"
 	"github.com/clivern/walrus/core/util"
 
@@ -17,50 +18,305 @@ import (
 
 // GetSettings controller
 func GetSettings(c *gin.Context) {
-	db := model.Database{}
 
-	err := db.AutoConnect()
+	db := driver.NewEtcdDriver()
+
+	err := db.Connect()
 
 	if err != nil {
 		log.WithFields(log.Fields{
-			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"correlation_id": c.GetHeader("x-correlation-id"),
 			"error":          err.Error(),
-		}).Error(`Failure while connecting database`)
+		}).Error("Internal server error")
 
-		c.Status(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
 		return
 	}
 
 	defer db.Close()
 
+	optionStore := model.NewOptionStore(db)
+
+	s3Key, err := optionStore.GetOptionByKey("backup_s3_key")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Secret, err := optionStore.GetOptionByKey("backup_s3_secret")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Endpoint, err := optionStore.GetOptionByKey("backup_s3_endpoint")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Region, err := optionStore.GetOptionByKey("backup_s3_region")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Bucket, err := optionStore.GetOptionByKey("backup_s3_bucket")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"options": db.GetOptions(),
+		"s3Key":      s3Key.Value,
+		"s3Secret":   s3Secret.Value,
+		"s3Endpoint": s3Endpoint.Value,
+		"s3Region":   s3Region.Value,
+		"s3Bucket":   s3Bucket.Value,
 	})
 }
 
 // UpdateSettings controller
 func UpdateSettings(c *gin.Context) {
-	var options model.Options
 
-	db := model.Database{}
+	var settings map[string]string
 
 	data, _ := ioutil.ReadAll(c.Request.Body)
 
-	util.LoadFromJSON(&options, data)
+	err := util.LoadFromJSON(&settings, data)
 
-	err := db.AutoConnect()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Error! Invalid request",
+		})
+		return
+	}
+
+	db := driver.NewEtcdDriver()
+
+	err = db.Connect()
 
 	if err != nil {
 		log.WithFields(log.Fields{
-			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"correlation_id": c.GetHeader("x-correlation-id"),
 			"error":          err.Error(),
-		}).Error(`Failure while connecting database`)
+		}).Error("Internal server error")
 
-		c.Status(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
 		return
 	}
 
 	defer db.Close()
+
+	optionStore := model.NewOptionStore(db)
+
+	s3Key, err := optionStore.GetOptionByKey("backup_s3_key")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Secret, err := optionStore.GetOptionByKey("backup_s3_secret")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Endpoint, err := optionStore.GetOptionByKey("backup_s3_endpoint")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Region, err := optionStore.GetOptionByKey("backup_s3_region")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Bucket, err := optionStore.GetOptionByKey("backup_s3_bucket")
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	s3Key.Value = settings["s3Key"]
+	s3Secret.Value = settings["s3Secret"]
+	s3Endpoint.Value = settings["s3Endpoint"]
+	s3Region.Value = settings["s3Region"]
+	s3Bucket.Value = settings["s3Bucket"]
+
+	err = optionStore.UpdateOptionByKey(*s3Key)
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	err = optionStore.UpdateOptionByKey(*s3Secret)
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	err = optionStore.UpdateOptionByKey(*s3Endpoint)
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	err = optionStore.UpdateOptionByKey(*s3Region)
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	err = optionStore.UpdateOptionByKey(*s3Bucket)
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
 
 	c.Status(http.StatusOK)
 	return

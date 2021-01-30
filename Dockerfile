@@ -11,7 +11,7 @@ RUN apt-get update
 
 WORKDIR /app
 
-RUN curl -sL https://github.com/Clivern/Walrus/releases/download/v${WALRUS_VERSION}/Beetle_${WALRUS_VERSION}_Linux_x86_64.tar.gz | tar xz
+RUN curl -sL https://github.com/Clivern/Walrus/releases/download/v${WALRUS_VERSION}/Walrus_${WALRUS_VERSION}_Linux_x86_64.tar.gz | tar xz
 RUN rm LICENSE
 RUN rm README.md
 RUN mv Walrus walrus

@@ -39,41 +39,9 @@ const routes = [
 		},
 	},
 	{
-		path: "/hosts/:hostId/backups",
-		name: "Backups",
-		component: () => import("../views/Backups.vue"),
-		meta: {
-			requiresAuth: true,
-		},
-	},
-	{
-		path: "/hosts/:hostId/backups/:backupId",
-		name: "Backup",
-		component: () => import("../views/Backup.vue"),
-		meta: {
-			requiresAuth: true,
-		},
-	},
-	{
 		path: "/settings",
 		name: "Settings",
 		component: () => import("../views/Settings.vue"),
-		meta: {
-			requiresAuth: true,
-		},
-	},
-	{
-		path: "/jobs",
-		name: "Jobs",
-		component: () => import("../views/Jobs.vue"),
-		meta: {
-			requiresAuth: true,
-		},
-	},
-	{
-		path: "/jobs/:jobId",
-		name: "Job",
-		component: () => import("../views/Job.vue"),
 		meta: {
 			requiresAuth: true,
 		},
@@ -96,14 +64,14 @@ const router = new VueRouter({
 // Auth Middleware
 router.beforeEach((to, from, next) => {
 	if (to.matched.some((record) => record.meta.requiresAuth)) {
-		if (localStorage.getItem("user_api_token") == null) {
+		if (localStorage.getItem("user_api_key") == null) {
 			next({
 				path: "/login",
 				params: { nextUrl: to.fullPath },
 			});
 		}
 	} else if (to.name == "Login") {
-		localStorage.removeItem("user_api_token");
+		localStorage.removeItem("user_api_key");
 	}
 	next();
 });

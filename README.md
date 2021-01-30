@@ -5,18 +5,18 @@
     <p align="center">
         <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Build/badge.svg"></a>
         <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg"></a>
-        <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-0.0.1-red.svg"></a>
+        <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-0.1.0-red.svg"></a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Walrus"><img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=0.0.1"></a>
         <a href="https://github.com/Clivern/Walrus/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg"></a>
     </p>
 </p>
 <br/>
 <p align="center">
-    <img src="/assets/chart.png?v=0.0.1" width="60%" />
+    <img src="/assets/chart.png?v=0.1.0" width="80%" />
 </p>
 
 
-Walrus is a fast, secure and reliable backup system. With walrus, you can backup services like MySQL, PostgreSQL, Redis or a complete directory with a short interval and low overhead. It supports AWS S3, digitalocean spaces and any S3-compatible object storage service.
+Walrus is a fast, secure and reliable backup system suitable for modern infrastructure. With walrus, you can backup services like MySQL, PostgreSQL, Redis, etcd or a complete directory with a short interval and low overhead. It supports AWS S3, digitalocean spaces and any S3-compatible object storage service.
 
 
 ## Documentation
@@ -29,10 +29,14 @@ Download [the latest walrus binary](https://github.com/Clivern/Walrus/releases).
 $ curl -sL https://github.com/Clivern/Walrus/releases/download/x.x.x/walrus_x.x.x_OS.tar.gz | tar xz
 ```
 
+Then install etcd cluster or single node, please refer to etcd docs or bin directory inside this repository.
+
 
 #### Run Walrus Tower:
 
 Create the tower configs file `tower.config.yml` from `config.dist.yml`. Something like the following:
+
+Please make sure to update the `apiKey` and `encryptionKey` to a different random values.
 
 ```yaml
 # Tower configs
@@ -51,8 +55,15 @@ tower:
 
     # API Configs
     api:
-        key: ${WALRUS_API_KEY:- }
-        encryptionKey: ${WALRUS_ENCRYPTION_KEY:- }
+        key: ${WALRUS_API_KEY:-6c68b836-6f8e-465e-b59f-89c1db53afca}
+        encryptionKey: ${WALRUS_ENCRYPTION_KEY:-B?E(H+Mb}
+
+    # Async Workers
+    workers:
+        # Queue max capacity
+        buffer: ${WALRUS_WORKERS_CHAN_CAPACITY:-5000}
+        # Number of concurrent workers
+        count: ${WALRUS_WORKERS_COUNT:-4}
 
     # Runtime, Requests/Response and Walrus Metrics
     metrics:
@@ -62,18 +73,20 @@ tower:
 
     # Application Database
     database:
-        # Database driver (sqlite3, mysql)
-        driver: ${WALRUS_DATABASE_DRIVER:-sqlite3}
-        # Hostname
-        host: ${WALRUS_DATABASE_MYSQL_HOST:-localhost}
-        # Port
-        port: ${WALRUS_DATABASE_MYSQL_PORT:-3306}
-        # Database
-        name: ${WALRUS_DATABASE_MYSQL_DATABASE:-walrus.db}
-        # Username
-        username: ${WALRUS_DATABASE_MYSQL_USERNAME:-root}
-        # Password
-        password: ${WALRUS_DATABASE_MYSQL_PASSWORD:-root}
+        # database driver
+        driver: ${WALRUS_DB_DRIVER:-etcd}
+
+        etcd:
+            # etcd database name or prefix
+            databaseName: ${WALRUS_DB_ETCD_DB:-walrus}
+            # etcd username
+            username: ${WALRUS_DB_ETCD_USERNAME:- }
+            # etcd password
+            password: ${WALRUS_DB_ETCD_PASSWORD:- }
+            # etcd endpoints
+            endpoints: ${WALRUS_DB_ETCD_ENDPOINTS:-http://127.0.0.1:2379}
+            # Timeout in seconds
+            timeout: 30
 
     # Log configs
     log:
@@ -111,24 +124,24 @@ agent:
         pemPath: ${WALRUS_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${WALRUS_API_TLS_KEYPATH:-cert/server.key}
 
-    # Message Broker Configs
-    broker:
-        # Broker driver (native)
-        driver: ${WALRUS_BROKER_DRIVER:-native}
-        # Native driver configs
-        native:
-            # Queue max capacity
-            capacity: ${WALRUS_BROKER_NATIVE_CAPACITY:-5000}
-            # Number of concurrent workers
-            workers: ${WALRUS_BROKER_NATIVE_WORKERS:-4}
+    # API Configs
+    api:
+        key: ${WALRUS_API_KEY:-56e1a911-cc64-44af-9c5d-8c7e72ec96a1}
+
+    # Async Workers
+    workers:
+        # Queue max capacity
+        buffer: ${WALRUS_WORKERS_CHAN_CAPACITY:-5000}
+        # Number of concurrent workers
+        count: ${WALRUS_WORKERS_COUNT:-4}
 
     # Tower Configs
     tower:
         url: ${WALRUS_TOWER_URL:-http://127.0.0.1:8000}
         # This must match the one defined in tower config file
-        apiKey: ${WALRUS_TOWER_API_KEY:- }
+        apiKey: ${WALRUS_TOWER_API_KEY:-6c68b836-6f8e-465e-b59f-89c1db53afca}
         # This must match the one defined in tower config file
-        encryptionKey: ${WALRUS_ENCRYPTION_KEY:- }
+        encryptionKey: ${WALRUS_ENCRYPTION_KEY:-B?E(H+Mb}
         # Time interval between agent ping checks
         pingInterval: ${WALRUS_CHECK_INTERVAL:-60}
 
@@ -147,6 +160,8 @@ The run the `agent` with `systemd`
 ```
 walrus agent -c /path/to/agent.config.yml
 ```
+
+Now you can open the walrus tower dashboard `http://127.0.0.1:8000` and start the setup.
 
 
 #### To run the Admin Dashboard (Development Only):

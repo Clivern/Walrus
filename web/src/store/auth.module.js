@@ -21,14 +21,14 @@ const getters = {
 };
 
 const actions = {
-	async authAction(context, email, password) {
-		const result = await authAction(email, password);
+	async authAction(context, payload) {
+		const result = await authAction(payload);
 		context.commit("SET_AUTH_RESULT", result.data);
 		return result;
 	},
 
-	async setupAction(context, email, password) {
-		const result = await setupAction(email, password);
+	async setupAction(context, payload) {
+		const result = await setupAction(payload);
 		context.commit("SET_SETUP_RESULT", result.data);
 		return result;
 	},

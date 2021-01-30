@@ -2,44 +2,58 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
+// +build unit
+
 package util
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/clivern/walrus/pkg"
+
+	"github.com/franela/goblin"
 )
 
-// TestInArray test cases
-func TestInArray(t *testing.T) {
-	// TestInArray
-	t.Run("TestInArray", func(t *testing.T) {
-		pkg.Expect(t, InArray("A", []string{"A", "B", "C", "D"}), true)
-		pkg.Expect(t, InArray("B", []string{"A", "B", "C", "D"}), true)
-		pkg.Expect(t, InArray("H", []string{"A", "B", "C", "D"}), false)
-		pkg.Expect(t, InArray(1, []int{2, 3, 1}), true)
-		pkg.Expect(t, InArray(9, []int{2, 3, 1}), false)
-	})
-}
+// TestHelpers
+func TestHelpers(t *testing.T) {
+	baseDir := pkg.GetBaseDir("cache")
+	pkg.LoadConfigs(fmt.Sprintf("%s/config.dist.yml", baseDir))
 
-// TestEncryption test cases
-func TestEncryption(t *testing.T) {
-	// TestEncryption
-	t.Run("TestEncryption", func(t *testing.T) {
-		ciphertext, err := Encrypt([]byte("Hello World"), "password")
-		plaintext, err := Decrypt(ciphertext, "password")
-		pkg.Expect(t, "Hello World", string(plaintext))
-		pkg.Expect(t, err, nil)
-	})
-}
+	g := goblin.Goblin(t)
 
-// TestHashing test cases
-func TestHashing(t *testing.T) {
-	// TestHashing
-	t.Run("TestHashing", func(t *testing.T) {
-		hash, err := HashPassword("password")
-		pkg.Expect(t, true, CheckPasswordHash("password", hash))
-		pkg.Expect(t, false, CheckPasswordHash("PasSword", hash))
-		pkg.Expect(t, err, nil)
+	g.Describe("#TestInArray", func() {
+		g.It("It should satisfy test cases", func() {
+			g.Assert(InArray("A", []string{"A", "B", "C", "D"})).Equal(true)
+			g.Assert(InArray("B", []string{"A", "B", "C", "D"})).Equal(true)
+			g.Assert(InArray("H", []string{"A", "B", "C", "D"})).Equal(false)
+			g.Assert(InArray(1, []int{2, 3, 1})).Equal(true)
+			g.Assert(InArray(9, []int{2, 3, 1})).Equal(false)
+		})
+	})
+
+	g.Describe("#TestEncryption", func() {
+		g.It("It should satisfy test cases", func() {
+			ciphertext, err := Encrypt([]byte("Hello World"), "password")
+			plaintext, err := Decrypt(ciphertext, "password")
+
+			g.Assert(string(plaintext)).Equal("Hello World")
+			g.Assert(err).Equal(nil)
+
+			ciphertext = []byte("Hello World")
+			plaintext, err = Decrypt(ciphertext, "password")
+
+			g.Assert(string(plaintext)).Equal("")
+			g.Assert(err.Error()).Equal("Invalid encrypted text")
+		})
+	})
+
+	g.Describe("#TestHashing", func() {
+		g.It("It should satisfy test cases", func() {
+			hash, err := HashPassword("password")
+			g.Assert(true).Equal(CheckPasswordHash("password", hash))
+			g.Assert(false).Equal(CheckPasswordHash("PasSword", hash))
+			g.Assert(err).Equal(nil)
+		})
 	})
 }

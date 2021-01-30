@@ -19,8 +19,7 @@
 			</p>
 			<br />
 			<small>
-				<b-icon pack="fas" icon="broadcast-tower" size="is-small">
-				</b-icon>
+				<b-icon pack="fas" icon="broadcast-tower" size="is-small"> </b-icon>
 				<strong
 					v-bind:class="{
 						'has-text-info': tower_status != 'down',
@@ -30,14 +29,9 @@
 					Tower is {{ tower_status }}</strong
 				><br />
 				Made with
-				<span class="icon has-text-danger"
-					><i class="fas fa-heart"></i
-				></span>
+				<span class="icon has-text-danger"><i class="fas fa-heart"></i></span>
 				by
-				<a
-					href="https://github.com/clivern"
-					target="_blank"
-					rel="noopener"
+				<a href="https://github.com/clivern" target="_blank" rel="noopener"
 					>Clivern</a
 				><br />
 			</small>
@@ -47,17 +41,6 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-	margin: 40px 0 0;
-}
-ul {
-	list-style-type: none;
-	padding: 0;
-}
-li {
-	display: inline-block;
-	margin: 0 10px;
-}
 a {
 	color: #42b983;
 }
@@ -85,7 +68,7 @@ export default {
 			(err) => {
 				this.$buefy.toast.open({
 					message: err,
-					type: "is-danger",
+					type: "is-danger is-light",
 				});
 			}
 		);

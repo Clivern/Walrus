@@ -57,7 +57,7 @@ func Metric() gin.HandlerFunc {
 		elapsed := float64(time.Since(start)) / float64(time.Second)
 
 		log.WithFields(log.Fields{
-			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"correlation_id": c.GetHeader("x-correlation-id"),
 		}).Info(`Collecting metrics`)
 
 		// Collect Metrics

@@ -17,8 +17,7 @@ import (
 
 	"github.com/clivern/walrus/core/controller/tower"
 	"github.com/clivern/walrus/core/middleware"
-	"github.com/clivern/walrus/core/model"
-	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/util"
 
 	"github.com/drone/envsubst"
 	"github.com/gin-gonic/gin"
@@ -64,12 +63,13 @@ var towerCmd = &cobra.Command{
 		}
 
 		viper.SetDefault("role", "tower")
+		viper.SetDefault("app.name", util.GenerateUUID4())
 
 		if viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))) != "stdout" {
 			dir, _ := filepath.Split(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
 
-			if !service.DirExists(dir) {
-				if _, err := service.EnsureDir(dir, 777); err != nil {
+			if !util.DirExists(dir) {
+				if _, err := util.EnsureDir(dir, 775); err != nil {
 					panic(fmt.Sprintf(
 						"Directory [%s] creation failed with error: %s",
 						dir,
@@ -78,7 +78,7 @@ var towerCmd = &cobra.Command{
 				}
 			}
 
-			if !service.FileExists(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role")))) {
+			if !util.FileExists(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role")))) {
 				f, err := os.Create(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
 				if err != nil {
 					panic(fmt.Sprintf(
@@ -109,7 +109,7 @@ var towerCmd = &cobra.Command{
 
 		log.SetLevel(level)
 
-		if viper.GetString(fmt.Sprintf("%s.app.mode", viper.GetString("role"))) == "prod" {
+		if viper.GetString(fmt.Sprintf("%s.mode", viper.GetString("role"))) == "prod" {
 			gin.SetMode(gin.ReleaseMode)
 			gin.DefaultWriter = ioutil.Discard
 			gin.DisableConsoleColor()
@@ -121,33 +121,18 @@ var towerCmd = &cobra.Command{
 			log.SetFormatter(&log.TextFormatter{})
 		}
 
-		// Init DB Connection
-		db := model.Database{}
-		err = db.AutoConnect()
-
-		if err != nil {
-			panic(err.Error())
-		}
-
-		// Migrate Database
-		success := db.Migrate()
-
-		if !success {
-			panic("Error! Unable to migrate database tables.")
-		}
-
-		defer db.Close()
-
 		r := gin.Default()
+		workers := tower.NewWorkers()
+
+		// Allow CORS only for development
+		if viper.GetString(fmt.Sprintf("%s.mode", viper.GetString("role"))) == "dev" {
+			r.Use(middleware.Cors())
+		}
 
 		r.Use(middleware.Correlation())
 		r.Use(middleware.Auth())
 
-		// Allow CORS only for development
-		if viper.GetString(fmt.Sprintf("%s.app.mode", viper.GetString("role"))) == "dev" {
-			r.Use(middleware.Cors())
-		}
-
+		r.Use(middleware.Decrypt())
 		r.Use(middleware.Logger())
 		r.Use(middleware.Metric())
 
@@ -175,26 +160,37 @@ var towerCmd = &cobra.Command{
 
 		apiv1 := r.Group("/api/v1")
 		{
-			apiv1.GET("/jobs", tower.GetJobs)
-			apiv1.GET("/jobs/:jobId", tower.GetJob)
-			apiv1.DELETE("/jobs/:jobId", tower.DeleteJob)
+			// Hosts
+			apiv1.GET("/host", tower.GetHosts)
+			apiv1.GET("/host/:hostname", tower.GetHost)
+			apiv1.DELETE("/host/:hostname", tower.DeleteHost)
 
-			// These endpoints accept only encrypted data
-			apiv1.POST("/agent/heartbeat", tower.AgentsHeartbeat)
-			apiv1.POST("/agent/postback", tower.AgentsPostback)
+			// Host Cron
+			apiv1.POST("/host/:hostname/cron", tower.CreateHostCron)
+			apiv1.GET("/host/:hostname/cron", tower.GetHostCrons)
+			apiv1.GET("/host/:hostname/cron/:cronId", tower.GetHostCron)
+			apiv1.PUT("/host/:hostname/cron/:cronId", tower.UpdateHostCron)
+			apiv1.DELETE("/host/:hostname/cron/:cronId", tower.DeleteHostCron)
 
-			apiv1.GET("/hosts", tower.GetHosts)
-			apiv1.GET("/hosts/:hostId", tower.GetHost)
-			apiv1.PUT("/hosts/:hostId", tower.UpdateHost)
-			apiv1.DELETE("/hosts/:hostId", tower.DeleteHost)
+			// Host Jobs
+			apiv1.GET("/host/:hostname/job", tower.GetHostJobs)
+			apiv1.GET("/host/:hostname/job/:jobId", tower.GetHostJob)
+			apiv1.PUT("/host/:hostname/job/:jobId", tower.UpdateHostJob)
+			apiv1.DELETE("/host/:hostname/job/:jobId", tower.DeleteHostJob)
 
-			apiv1.GET("/hosts/:hostId/backups", tower.GetHostBackups)
-			apiv1.GET("/hosts/:hostId/backups/:backupId", tower.GetBackup)
-			apiv1.DELETE("/hosts/:hostId/backups/:backupId", tower.DeleteBackup)
-
+			// Settings
 			apiv1.GET("/settings", tower.GetSettings)
 			apiv1.PUT("/settings", tower.UpdateSettings)
+
+			// These endpoints accept only encrypted data
+			apiv1.POST("/action/bootstrap_agent", tower.AgentBootstrap)
+			apiv1.POST("/action/agent_heartbeat", tower.AgentHeartbeat)
+			apiv1.POST("/action/agent_postback", tower.AgentPostback)
 		}
+
+		go workers.BroadcastRequests()
+		go workers.NotifyTower(workers.HandleWorkload())
+		go tower.Heartbeat()
 
 		var runerr error
 

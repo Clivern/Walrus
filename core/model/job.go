@@ -5,125 +5,244 @@
 package model
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
-	"github.com/clivern/walrus/core/migration"
+	"github.com/clivern/walrus/core/driver"
+	"github.com/clivern/walrus/core/util"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
-var (
-	// JobPending pending job type
-	JobPending = "pending"
+const (
+	// PendingStatus constant
+	PendingStatus = "@pending"
 
-	// JobFailed failed job type
-	JobFailed = "failed"
+	// FailedStatus constant
+	FailedStatus = "@failed"
 
-	// JobSuccess success job type
-	JobSuccess = "success"
-
-	// JobOnHold on hold job type
-	JobOnHold = "on_hold"
+	// SuccessStatus constant
+	SuccessStatus = "@success"
 )
 
-// Job struct
+// JobRecord type
+type JobRecord struct {
+	ID        string `json:"id"`
+	Hostname  string `json:"hostname"`
+	CronID    string `json:"cronId"`
+	Status    string `json:"status"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
+}
+
+// Job type
 type Job struct {
-	ID        int        `json:"id"`
-	UUID      string     `json:"uuid"`
-	Payload   string     `json:"payload"`
-	Status    string     `json:"status"`
-	Type      string     `json:"type"`
-	Result    string     `json:"result"`
-	Retry     int        `json:"retry"`
-	Parent    int        `json:"parent"`
-	RunAt     *time.Time `json:"run_at"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	db driver.Database
 }
 
-// Jobs struct
-type Jobs struct {
-	Jobs []Job `json:"jobs"`
+// NewJobStore creates a new instance
+func NewJobStore(db driver.Database) *Job {
+	result := new(Job)
+	result.db = db
+
+	return result
 }
 
-// CreateJob creates a new job
-func (db *Database) CreateJob(job *Job) *Job {
-	db.Connection.Create(job)
-	return job
+// CreateRecord stores a job record
+func (j *Job) CreateRecord(record JobRecord) error {
+	record.CreatedAt = time.Now().Unix()
+	record.UpdatedAt = time.Now().Unix()
+
+	result, err := util.ConvertToJSON(record)
+
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"job_id":   record.ID,
+		"hostname": record.Hostname,
+	}).Debug("Create a job record")
+
+	// store job record data
+	err = j.db.Put(fmt.Sprintf(
+		"%s/host/%s/job/%s/j-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		record.Hostname,
+		record.ID,
+	), result)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// JobExistByID check if job exists
-func (db *Database) JobExistByID(id int) bool {
-	job := Job{}
+// UpdateRecord updates a job record
+func (j *Job) UpdateRecord(record JobRecord) error {
+	record.UpdatedAt = time.Now().Unix()
 
-	db.Connection.Where("id = ?", id).First(&job)
+	result, err := util.ConvertToJSON(record)
 
-	return job.ID > 0
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"job_id":   record.ID,
+		"hostname": record.Hostname,
+	}).Debug("Update a job record")
+
+	// store job record data
+	err = j.db.Put(fmt.Sprintf(
+		"%s/host/%s/job/%s/j-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		record.Hostname,
+		record.ID,
+	), result)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// GetJobByID gets a job by id
-func (db *Database) GetJobByID(id int) Job {
-	job := Job{}
+// GetRecord gets job record data
+func (j *Job) GetRecord(hostname, jobID string) (*JobRecord, error) {
+	recordData := &JobRecord{}
 
-	db.Connection.Where("id = ?", id).First(&job)
+	log.WithFields(log.Fields{
+		"job_id":   jobID,
+		"hostname": hostname,
+	}).Debug("Get a job record data")
 
-	return job
+	data, err := j.db.Get(fmt.Sprintf(
+		"%s/host/%s/job/%s/j-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostname,
+		jobID,
+	))
+
+	if err != nil {
+		return recordData, err
+	}
+
+	for k, v := range data {
+		// Check if it is the data key
+		if strings.Contains(k, "/j-data") {
+			err = util.LoadFromJSON(recordData, []byte(v))
+
+			if err != nil {
+				return recordData, err
+			}
+
+			return recordData, nil
+		}
+	}
+
+	return recordData, fmt.Errorf(
+		"Unable to find job record with id: %s and hostname: %s",
+		jobID,
+		hostname,
+	)
 }
 
-// GetJobs gets jobs
-func (db *Database) GetJobs() []Job {
-	jobs := []Job{}
+// DeleteRecord deletes a job record
+func (j *Job) DeleteRecord(hostname, jobID string) (bool, error) {
 
-	db.Connection.Select("*").Find(&jobs)
+	log.WithFields(log.Fields{
+		"job_id":   jobID,
+		"hostname": hostname,
+	}).Debug("Delete a job record")
 
-	return jobs
+	count, err := j.db.Delete(fmt.Sprintf(
+		"%s/host/%s/job/%s",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostname,
+		jobID,
+	))
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }
 
-// JobExistByUUID check if job exists
-func (db *Database) JobExistByUUID(uuid string) bool {
-	job := Job{}
+// GetHostJobs get jobs for a host
+func (j *Job) GetHostJobs(hostname string) ([]*JobRecord, error) {
 
-	db.Connection.Where("uuid = ?", uuid).First(&job)
+	log.Debug("Get jobs to run")
 
-	return job.ID > 0
+	records := make([]*JobRecord, 0)
+
+	data, err := j.db.Get(fmt.Sprintf(
+		"%s/host/%s/job",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostname,
+	))
+
+	if err != nil {
+		return records, err
+	}
+
+	for k, v := range data {
+		// Check if it is the data key
+		if strings.Contains(k, "/j-data") {
+			recordData := &JobRecord{}
+
+			err = util.LoadFromJSON(recordData, []byte(v))
+
+			if err != nil {
+				return records, err
+			}
+
+			records = append(records, recordData)
+		}
+	}
+
+	return records, nil
 }
 
-// GetJobByUUID gets a job by uuid
-func (db *Database) GetJobByUUID(uuid string) Job {
-	job := Job{}
+// CountHostJobs counts host jobs
+func (j *Job) CountHostJobs(hostname, status string) (int, error) {
 
-	db.Connection.Where("uuid = ?", uuid).First(&job)
+	log.Debug("Count host jobs")
 
-	return job
-}
-
-// GetPendingJobByType gets a job by uuid
-func (db *Database) GetPendingJobByType(jobType string) Job {
-	job := Job{}
-
-	db.Connection.Where("status = ? AND type = ?", JobPending, jobType).First(&job)
-
-	return job
-}
-
-// CountJobs count jobs by status
-func (db *Database) CountJobs(status string) int {
 	count := 0
 
-	db.Connection.Model(&Job{}).Where("status = ?", status).Count(&count)
+	data, err := j.db.Get(fmt.Sprintf(
+		"%s/host/%s/job",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostname,
+	))
 
-	return count
-}
+	if err != nil {
+		return count, err
+	}
 
-// DeleteJobByID deletes a job by id
-func (db *Database) DeleteJobByID(id int) {
-	db.Connection.Unscoped().Where("id=?", id).Delete(&migration.Job{})
-}
+	for k, v := range data {
+		// Check if it is the data key
+		if strings.Contains(k, "/j-data") {
+			recordData := &JobRecord{}
 
-// DeleteJobByUUID deletes a job by uuid
-func (db *Database) DeleteJobByUUID(uuid string) {
-	db.Connection.Unscoped().Where("uuid=?", uuid).Delete(&migration.Job{})
-}
+			err = util.LoadFromJSON(recordData, []byte(v))
 
-// UpdateJobByID updates a job by ID
-func (db *Database) UpdateJobByID(job *Job) {
-	db.Connection.Save(&job)
+			if err != nil {
+				return count, err
+			}
+
+			if recordData.Status != status {
+				continue
+			}
+
+			count++
+		}
+	}
+
+	return count, nil
 }

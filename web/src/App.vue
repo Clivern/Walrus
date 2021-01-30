@@ -14,27 +14,20 @@
 					Hosts</router-link
 				>
 				|
-				<router-link to="/jobs">
-					<b-icon pack="fas" icon="bolt" size="is-small"> </b-icon>
-					Jobs</router-link
-				>
-				|
 				<router-link to="/settings">
 					<b-icon pack="fas" icon="cog" size="is-small"> </b-icon>
 					Settings</router-link
 				>
 				|
 				<a href="#" @click="logout">
-					<b-icon pack="fas" icon="sign-out-alt" size="is-small">
-					</b-icon>
+					<b-icon pack="fas" icon="sign-out-alt" size="is-small"> </b-icon>
 					Logout</a
 				>
 			</template>
 			<template v-else>
 				|
 				<router-link to="/login">
-					<b-icon pack="fas" icon="sign-in-alt" size="is-small">
-					</b-icon>
+					<b-icon pack="fas" icon="sign-in-alt" size="is-small"> </b-icon>
 					Login</router-link
 				>
 			</template>
@@ -67,22 +60,30 @@
 export default {
 	data() {
 		return {
-			logged: localStorage.getItem("user_api_token") != null,
+			logged:
+				localStorage.getItem("user_api_key") != null &&
+				localStorage.getItem("user_email") != null,
 		};
 	},
 	methods: {
 		logout() {
-			console.log("Logout");
 			this.logged = false;
-			localStorage.removeItem("user_api_token");
+			localStorage.removeItem("user_api_key");
+			localStorage.removeItem("user_email");
+			localStorage.removeItem("user_id");
+			localStorage.removeItem("user_name");
 			this.$router.push("/login");
 		},
 		refreshState() {
-			this.logged = localStorage.getItem("user_api_token") != null;
+			this.logged =
+				localStorage.getItem("user_api_key") != null &&
+				localStorage.getItem("user_email") != null;
 		},
 	},
 	mounted() {
-		this.logged = localStorage.getItem("user_api_token") != null;
+		this.logged =
+			localStorage.getItem("user_api_key") != null &&
+			localStorage.getItem("user_email") != null;
 	},
 };
 </script>

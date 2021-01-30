@@ -5,83 +5,164 @@
 package model
 
 import (
-	"github.com/clivern/walrus/core/migration"
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/clivern/walrus/core/driver"
+	"github.com/clivern/walrus/core/util"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
-// Option struct
+// Option type
 type Option struct {
-	ID    int    `json:"id"`
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	db driver.Database
 }
 
-// Options struct
-type Options struct {
-	Options []Option `json:"options"`
+// OptionData struct
+type OptionData struct {
+	Key       string `json:"key"`
+	Value     string `json:"value"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
 }
 
-// CreateOption creates a new option
-func (db *Database) CreateOption(option *Option) *Option {
-	db.Connection.Create(option)
-	return option
+// NewOptionStore creates a new instance
+func NewOptionStore(db driver.Database) *Option {
+	result := new(Option)
+	result.db = db
+
+	return result
 }
 
-// OptionExistByID check if option exists
-func (db *Database) OptionExistByID(id int) bool {
-	option := Option{}
+// CreateOption stores an option
+func (o *Option) CreateOption(option OptionData) error {
 
-	db.Connection.Where("id = ?", id).First(&option)
+	option.CreatedAt = time.Now().Unix()
+	option.UpdatedAt = time.Now().Unix()
 
-	return option.ID > 0
+	result, err := util.ConvertToJSON(option)
+
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"option_key": option.Key,
+	}).Debug("Create an option")
+
+	// store option data
+	err = o.db.Put(fmt.Sprintf(
+		"%s/option/%s/o-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		option.Key,
+	), result)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// OptionExistByKey check if an option exists
-func (db *Database) OptionExistByKey(key string) bool {
-	option := Option{}
+// UpdateOptionByKey updates an option by key
+func (o *Option) UpdateOptionByKey(option OptionData) error {
+	option.UpdatedAt = time.Now().Unix()
 
-	db.Connection.Where("key = ?", key).First(&option)
+	result, err := util.ConvertToJSON(option)
 
-	return option.ID > 0
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"option_key": option.Key,
+	}).Debug("Update an option")
+
+	// store option data
+	err = o.db.Put(fmt.Sprintf(
+		"%s/option/%s/o-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		option.Key,
+	), result)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// GetOptionByID gets an option by id
-func (db *Database) GetOptionByID(id int) Option {
-	option := Option{}
+// UpdateOptions update options
+func (o *Option) UpdateOptions(options []OptionData) error {
+	log.Debug("Update options")
 
-	db.Connection.Where("id = ?", id).First(&option)
+	for _, option := range options {
+		err := o.UpdateOptionByKey(option)
 
-	return option
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-// GetOptionByKey gets an option by key
-func (db *Database) GetOptionByKey(key string) Option {
-	option := Option{}
+// GetOptionByKey gets an option by a key
+func (o *Option) GetOptionByKey(key string) (*OptionData, error) {
+	optionResult := &OptionData{}
 
-	db.Connection.Where("key = ?", key).First(&option)
+	log.WithFields(log.Fields{
+		"option_key": key,
+	}).Debug("Get an option")
 
-	return option
+	data, err := o.db.Get(fmt.Sprintf(
+		"%s/option/%s/o-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		key,
+	))
+
+	if err != nil {
+		return optionResult, err
+	}
+
+	for k, v := range data {
+		// Check if it is the data key
+		if strings.Contains(k, "/o-data") {
+			err = util.LoadFromJSON(optionResult, []byte(v))
+
+			if err != nil {
+				return optionResult, err
+			}
+
+			return optionResult, nil
+		}
+	}
+
+	return optionResult, fmt.Errorf(
+		"Unable to find an option with a key: %s",
+		key,
+	)
 }
 
-// GetOptions gets options
-func (db *Database) GetOptions() []Option {
-	options := []Option{}
+// DeleteOptionByKey deletes an option by a key
+func (o *Option) DeleteOptionByKey(key string) (bool, error) {
 
-	db.Connection.Select("*").Find(&options)
+	log.WithFields(log.Fields{
+		"option_key": key,
+	}).Debug("Delete an option")
 
-	return options
-}
+	count, err := o.db.Delete(fmt.Sprintf(
+		"%s/option/%s",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		key,
+	))
 
-// DeleteOptionByID deletes an option by id
-func (db *Database) DeleteOptionByID(id int) {
-	db.Connection.Unscoped().Where("id=?", id).Delete(&migration.Option{})
-}
+	if err != nil {
+		return false, err
+	}
 
-// DeleteOptionByKey deletes an option by key
-func (db *Database) DeleteOptionByKey(key string) {
-	db.Connection.Unscoped().Where("key=?", key).Delete(&migration.Option{})
-}
-
-// UpdateOptionByID updates an option by ID
-func (db *Database) UpdateOptionByID(option *Option) {
-	db.Connection.Save(&option)
+	return count > 0, nil
 }

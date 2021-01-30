@@ -5,97 +5,186 @@
 package model
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
-	"github.com/clivern/walrus/core/migration"
+	"github.com/clivern/walrus/core/driver"
+	"github.com/clivern/walrus/core/util"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
-// Host struct
+// Host type
 type Host struct {
-	ID              int        `json:"id"`
-	Name            string     `json:"name"`
-	UUID            string     `json:"uuid"`
-	RetentionPolicy string     `json:"retention_policy"`
-	StorageID       string     `json:"storage_id"`
-	Status          string     `json:"status"`
-	LastCheck       *time.Time `json:"last_check"`
-	CreatedAt       time.Time  `json:"created_at"`
-	UpdatedAt       time.Time  `json:"updated_at"`
+	db driver.Database
 }
 
-// Hosts struct
-type Hosts struct {
-	Hosts []Host `json:"hosts"`
+// HostData type
+type HostData struct {
+	ID        string `json:"id"`
+	Hostname  string `json:"hostname"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
 }
 
-// CreateHost creates a new host
-func (db *Database) CreateHost(host *Host) *Host {
-	db.Connection.Create(host)
-	return host
+// NewHostStore creates a new instance
+func NewHostStore(db driver.Database) *Host {
+	result := new(Host)
+	result.db = db
+
+	return result
 }
 
-// HostExistByID check if host exists
-func (db *Database) HostExistByID(id int) bool {
-	host := Host{}
+// CreateHost creates a host
+func (h *Host) CreateHost(hostData HostData) error {
 
-	db.Connection.Where("id = ?", id).First(&host)
+	hostData.ID = util.GenerateUUID4()
+	hostData.CreatedAt = time.Now().Unix()
+	hostData.UpdatedAt = time.Now().Unix()
 
-	return host.ID > 0
-}
+	result, err := util.ConvertToJSON(hostData)
 
-// GetHostByID gets a host by id
-func (db *Database) GetHostByID(id int) Host {
-	host := Host{}
-
-	db.Connection.Where("id = ?", id).First(&host)
-
-	return host
-}
-
-// GetHosts gets services
-func (db *Database) GetHosts() []Host {
-	services := []Host{}
-
-	db.Connection.Select("*").Find(&services)
-
-	return services
-}
-
-// HostExistByUUID check if host exists
-func (db *Database) HostExistByUUID(uuid string) bool {
-	host := Host{}
-
-	db.Connection.Where("uuid = ?", uuid).First(&host)
-
-	return host.ID > 0
-}
-
-// GetHostByUUID gets a host by uuid
-func (db *Database) GetHostByUUID(uuid string) Host {
-	host := Host{}
-
-	db.Connection.Where("uuid = ?", uuid).First(&host)
-
-	return host
-}
-
-// DeleteHostByID deletes a host by id
-func (db *Database) DeleteHostByID(id int) {
-	db.Connection.Unscoped().Where("id=?", id).Delete(&migration.Host{})
-	db.Connection.Unscoped().Where("host_id=?", id).Delete(&migration.Job{})
-	db.Connection.Unscoped().Where("host_id=?", id).Delete(&migration.HostMeta{})
-}
-
-// DeleteHostByUUID deletes a host by uuid
-func (db *Database) DeleteHostByUUID(uuid string) {
-	host := db.GetHostByUUID(uuid)
-
-	if host.ID > 0 {
-		db.DeleteHostByID(host.ID)
+	if err != nil {
+		return err
 	}
+
+	log.WithFields(log.Fields{
+		"host_id":  hostData.ID,
+		"hostname": hostData.Hostname,
+	}).Debug("Create an agent")
+
+	// store agent data
+	err = h.db.Put(fmt.Sprintf(
+		"%s/host/%s/h-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostData.Hostname,
+	), result)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// UpdateHostByID updates a host by ID
-func (db *Database) UpdateHostByID(host *Host) {
-	db.Connection.Save(&host)
+// UpdateHost updates a host
+func (h *Host) UpdateHost(hostData HostData) error {
+	hostData.UpdatedAt = time.Now().Unix()
+
+	result, err := util.ConvertToJSON(hostData)
+
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"host_id":  hostData.ID,
+		"hostname": hostData.Hostname,
+	}).Debug("Update host")
+
+	// store agent status
+	err = h.db.Put(fmt.Sprintf(
+		"%s/host/%s/h-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostData.Hostname,
+	), result)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetHost gets a host
+func (h *Host) GetHost(hostname string) (*HostData, error) {
+	hostData := &HostData{}
+
+	log.WithFields(log.Fields{
+		"hostname": hostname,
+	}).Debug("Get a host")
+
+	data, err := h.db.Get(fmt.Sprintf(
+		"%s/host/%s/h-data",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostname,
+	))
+
+	if err != nil {
+		return hostData, err
+	}
+
+	for k, v := range data {
+		// Check if it is the data key
+		if strings.Contains(k, "/h-data") {
+			err = util.LoadFromJSON(hostData, []byte(v))
+
+			if err != nil {
+				return hostData, err
+			}
+
+			return hostData, nil
+		}
+	}
+
+	return hostData, fmt.Errorf(
+		"Unable to find host with name: %s",
+		hostname,
+	)
+}
+
+// GetHosts get hosts
+func (h *Host) GetHosts() ([]*HostData, error) {
+
+	log.Debug("Get hosts")
+
+	records := make([]*HostData, 0)
+
+	data, err := h.db.Get(fmt.Sprintf(
+		"%s/host",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+	))
+
+	if err != nil {
+		return records, err
+	}
+
+	for k, v := range data {
+		// Check if it is the data key
+		if strings.Contains(k, "/h-data") {
+			recordData := &HostData{}
+
+			err = util.LoadFromJSON(recordData, []byte(v))
+
+			if err != nil {
+				return records, err
+			}
+
+			records = append(records, recordData)
+		}
+	}
+
+	return records, nil
+}
+
+// DeleteHost deletes a host
+func (h *Host) DeleteHost(hostname string) (bool, error) {
+
+	log.WithFields(log.Fields{
+		"hostname": hostname,
+	}).Debug("Delete a host")
+
+	count, err := h.db.Delete(fmt.Sprintf(
+		"%s/host/%s",
+		viper.GetString(fmt.Sprintf("%s.database.etcd.databaseName", viper.GetString("role"))),
+		hostname,
+	))
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

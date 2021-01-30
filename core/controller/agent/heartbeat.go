@@ -7,16 +7,32 @@ package agent
 import (
 	"time"
 
+	"github.com/clivern/walrus/core/module"
+	"github.com/clivern/walrus/core/service"
+
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // Heartbeat function
-func Heartbeat(messages chan<- string) {
+func Heartbeat() {
+	httpClient := service.NewHTTPClient(30)
+	agent := module.NewAgent(httpClient)
+
 	for {
 		log.Info(`Agent heartbeat`)
 
-		messages <- "BAM!"
+		err := agent.Heartbeat()
 
-		time.Sleep(2 * time.Second)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err.Error(),
+			}).Error(`Error while calling tower`)
+
+			time.Sleep(time.Duration(viper.GetInt("agent.tower.pingInterval")) * time.Second)
+			continue
+		}
+
+		time.Sleep(time.Duration(viper.GetInt("agent.tower.pingInterval")) * time.Second)
 	}
 }

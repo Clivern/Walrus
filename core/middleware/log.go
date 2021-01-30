@@ -26,7 +26,7 @@ func Logger() gin.HandlerFunc {
 		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		log.WithFields(log.Fields{
-			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"correlation_id": c.GetHeader("x-correlation-id"),
 			"http_method":    c.Request.Method,
 			"http_path":      c.Request.URL.Path,
 			"request_body":   string(bodyBytes),
@@ -39,7 +39,7 @@ func Logger() gin.HandlerFunc {
 		size := c.Writer.Size()
 
 		log.WithFields(log.Fields{
-			"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
+			"correlation_id": c.GetHeader("x-correlation-id"),
 			"http_status":    status,
 			"response_size":  size,
 		}).Info(`Request finished`)

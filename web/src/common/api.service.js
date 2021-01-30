@@ -15,15 +15,28 @@ const ApiService = {
 
 	getHeaders() {
 		let apiKey = "";
+		let email = "";
+		let id = "";
 
-		if (localStorage.getItem("user_api_token") != null) {
-			apiKey = localStorage.getItem("user_api_token");
+		if (localStorage.getItem("user_api_key") != null) {
+			apiKey = localStorage.getItem("user_api_key");
+		}
+
+		if (localStorage.getItem("user_email") != null) {
+			email = localStorage.getItem("user_email");
+		}
+
+		if (localStorage.getItem("user_id") != null) {
+			id = localStorage.getItem("user_id");
 		}
 
 		return {
 			crossdomain: true,
 			headers: {
-				"x-api-key": apiKey,
+				"X-API-Key": apiKey,
+				"X-User-Email": email,
+				"X-User-ID": id,
+				"X-Client-ID": "dashboard",
 				"X-Requested-With": "XMLHttpRequest",
 				"Content-Type": "application/json",
 			},

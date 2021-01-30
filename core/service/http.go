@@ -21,16 +21,16 @@ type HTTPClient struct {
 }
 
 // NewHTTPClient creates an instance of http client
-func NewHTTPClient() *HTTPClient {
+func NewHTTPClient(timeout int) *HTTPClient {
 	return &HTTPClient{
-		Timeout: time.Duration(30),
+		Timeout: time.Duration(timeout),
 	}
 }
 
 // Get http call
 func (h *HTTPClient) Get(ctx context.Context, endpoint string, parameters, headers map[string]string) (*http.Response, error) {
 
-	endpoint, err := h.BuildParameters(endpoint, parameters)
+	endpoint, err := h.buildParameters(endpoint, parameters)
 
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (h *HTTPClient) Get(ctx context.Context, endpoint string, parameters, heade
 // Post http call
 func (h *HTTPClient) Post(ctx context.Context, endpoint string, data string, parameters, headers map[string]string) (*http.Response, error) {
 
-	endpoint, err := h.BuildParameters(endpoint, parameters)
+	endpoint, err := h.buildParameters(endpoint, parameters)
 
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (h *HTTPClient) Post(ctx context.Context, endpoint string, data string, par
 // Put http call
 func (h *HTTPClient) Put(ctx context.Context, endpoint string, data string, parameters, headers map[string]string) (*http.Response, error) {
 
-	endpoint, err := h.BuildParameters(endpoint, parameters)
+	endpoint, err := h.buildParameters(endpoint, parameters)
 
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (h *HTTPClient) Put(ctx context.Context, endpoint string, data string, para
 // Patch http call
 func (h *HTTPClient) Patch(ctx context.Context, endpoint string, data string, parameters, headers map[string]string) (*http.Response, error) {
 
-	endpoint, err := h.BuildParameters(endpoint, parameters)
+	endpoint, err := h.buildParameters(endpoint, parameters)
 
 	if err != nil {
 		return nil, err
@@ -150,7 +150,7 @@ func (h *HTTPClient) Patch(ctx context.Context, endpoint string, data string, pa
 // Delete http call
 func (h *HTTPClient) Delete(ctx context.Context, endpoint string, parameters, headers map[string]string) (*http.Response, error) {
 
-	endpoint, err := h.BuildParameters(endpoint, parameters)
+	endpoint, err := h.buildParameters(endpoint, parameters)
 
 	if err != nil {
 		return nil, err
@@ -177,8 +177,8 @@ func (h *HTTPClient) Delete(ctx context.Context, endpoint string, parameters, he
 	return resp, err
 }
 
-// BuildParameters add parameters to URL
-func (h *HTTPClient) BuildParameters(endpoint string, parameters map[string]string) (string, error) {
+// buildParameters add parameters to URL
+func (h *HTTPClient) buildParameters(endpoint string, parameters map[string]string) (string, error) {
 	u, err := url.Parse(endpoint)
 
 	if err != nil {
@@ -190,6 +190,7 @@ func (h *HTTPClient) BuildParameters(endpoint string, parameters map[string]stri
 	for k, v := range parameters {
 		q.Set(k, v)
 	}
+
 	u.RawQuery = q.Encode()
 
 	return u.String(), nil

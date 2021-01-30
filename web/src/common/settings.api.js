@@ -2,8 +2,12 @@
 
 import ApiService from "./api.service.js";
 
-const getItem = () => {
-	return ApiService.get("/");
+const updateSettings = (payload) => {
+	return ApiService.put("/api/v1/settings", payload);
 };
 
-export { getItem };
+const getSettings = () => {
+	return ApiService.get("/api/v1/settings");
+};
+
+export { updateSettings, getSettings };

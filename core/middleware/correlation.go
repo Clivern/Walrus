@@ -15,7 +15,7 @@ import (
 // Correlation middleware
 func Correlation() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		corralationID := c.Request.Header.Get("X-Correlation-ID")
+		corralationID := c.GetHeader("x-correlation-id")
 
 		if strings.TrimSpace(corralationID) == "" {
 			c.Request.Header.Add("X-Correlation-ID", util.GenerateUUID4())

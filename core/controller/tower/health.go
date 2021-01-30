@@ -13,14 +13,13 @@ import (
 
 // Health controller
 func Health(c *gin.Context) {
-	status := "ok"
 
 	log.WithFields(log.Fields{
 		"correlation_id": c.Request.Header.Get("X-Correlation-ID"),
-		"status":         status,
+		"status":         "ok",
 	}).Info(`Health check`)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": status,
+		"status": "ok",
 	})
 }

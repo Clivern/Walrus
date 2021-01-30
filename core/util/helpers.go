@@ -14,9 +14,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/satori/go.uuid"
@@ -212,12 +214,19 @@ func Decrypt(data []byte, passphrase string) ([]byte, error) {
 	}
 
 	gcm, err := cipher.NewGCM(block)
+
 	if err != nil {
 		return result, err
 	}
 
 	nonceSize := gcm.NonceSize()
+
+	if nonceSize > len(data)-1 {
+		return result, fmt.Errorf("Invalid encrypted text")
+	}
+
 	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
+
 	result, err = gcm.Open(nil, nonce, ciphertext, nil)
 
 	if err != nil {
@@ -235,12 +244,13 @@ func createHash(key string) string {
 }
 
 // LoadFromJSON update object from json
-func LoadFromJSON(item interface{}, data []byte) (bool, error) {
+func LoadFromJSON(item interface{}, data []byte) error {
 	err := json.Unmarshal(data, &item)
 	if err != nil {
-		return false, err
+		return err
 	}
-	return true, nil
+
+	return nil
 }
 
 // ConvertToJSON convert object to json
@@ -270,4 +280,67 @@ func CheckPasswordHash(password, hash string) bool {
 	)
 
 	return err == nil
+}
+
+// GetHostname gets the hostname
+func GetHostname() (string, error) {
+	hostname, err := os.Hostname()
+
+	if err != nil {
+		return "", err
+	}
+
+	return strings.ToLower(hostname), nil
+}
+
+// ValidRelPath checks for path traversal and correct forward slashes
+func ValidRelPath(path string) bool {
+	if path == "" || strings.Contains(path, `\`) || strings.HasPrefix(path, "/") || strings.Contains(path, "../") {
+		return false
+	}
+
+	return true
+}
+
+// DeleteDir deletes a dir
+func DeleteDir(dir string) bool {
+	if err := os.RemoveAll(dir); err == nil {
+		return true
+	}
+
+	return false
+}
+
+// IsEmailValid checks if the email provided passes the required structure
+// and length test. It also checks the domain has a valid MX record.
+func IsEmailValid(email string) bool {
+	if len(email) < 3 && len(email) > 254 {
+		return false
+	}
+
+	var emailRegex = regexp.MustCompile(
+		"^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+	)
+
+	if !emailRegex.MatchString(email) {
+		return false
+	}
+
+	parts := strings.Split(email, "@")
+
+	mx, err := net.LookupMX(parts[1])
+
+	if err != nil || len(mx) == 0 {
+		return false
+	}
+
+	return true
+}
+
+// IsEmpty validate if string is empty or not
+func IsEmpty(item string) bool {
+	if strings.TrimSpace(item) == "" {
+		return true
+	}
+	return false
 }
