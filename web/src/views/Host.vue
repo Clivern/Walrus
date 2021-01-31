@@ -19,8 +19,19 @@
 					aria-current-label="Current page"
 				>
 					<b-table-column
+						field="id"
+						label="Backup Cron ID"
+						centered
+						v-slot="props"
+					>
+						<span class="tag is-light">
+							{{ props.row.id }}
+						</span>
+					</b-table-column>
+
+					<b-table-column
 						field="name"
-						label="Backup Name"
+						label="Name"
 						centered
 						v-slot="props"
 					>
@@ -81,7 +92,7 @@
 						>
 					</b-table-column>
 
-					<td slot="empty" colspan="5">No records found.</td>
+					<td slot="empty" colspan="6">No records found.</td>
 				</b-table>
 			</section>
 
@@ -189,7 +200,7 @@ export default {
 				data: [],
 				isPaginated: true,
 				isPaginationSimple: false,
-				isPaginationRounded: false,
+				isPaginationRounded: true,
 				paginationPosition: "bottom",
 				currentPage: 1,
 				perPage: 15,

@@ -92,6 +92,10 @@ agent:
         # Time interval between agent ping checks
         pingInterval: ${WALRUS_CHECK_INTERVAL:-60}
 
+    # Backup settings
+    backup:
+        tmpDir: ${WALRUS_BACKUP_TMP_DIR:-/tmp}
+
     # Log configs
     log:
         # Log level, it can be debug, info, warn, error, panic, fatal

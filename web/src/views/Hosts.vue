@@ -71,7 +71,7 @@ export default {
 			data: [],
 			isPaginated: true,
 			isPaginationSimple: false,
-			isPaginationRounded: false,
+			isPaginationRounded: true,
 			paginationPosition: "bottom",
 			currentPage: 1,
 			perPage: 15,

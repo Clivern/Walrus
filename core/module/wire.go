@@ -145,6 +145,7 @@ func (w *Wire) SendJobToHostAgent(message BackupMessage) error {
 	agent := &model.AgentData{}
 
 	// TODO: Select a random running agents
+	// TODO: Cleanup stale stopped agents
 	for _, v := range agents {
 		if v.Status == model.UpStatus {
 			agent = v

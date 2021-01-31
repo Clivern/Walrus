@@ -23,7 +23,7 @@ func TestBackupRestoreDirectory(t *testing.T) {
 
 	g := goblin.Goblin(t)
 
-	backupClient := &Directory{}
+	mgr := NewManager(nil)
 	directory := fmt.Sprintf("%s/%s", baseDir, "cache/")
 	target := fmt.Sprintf("%s/cache/%s", baseDir, "app.tar.gz")
 
@@ -41,7 +41,7 @@ func TestBackupRestoreDirectory(t *testing.T) {
 		})
 
 		g.It("It should backup", func() {
-			err := backupClient.Backup(
+			err := mgr.Backup(
 				fmt.Sprintf("%s/test/", directory),
 				target,
 			)
@@ -55,7 +55,7 @@ func TestBackupRestoreDirectory(t *testing.T) {
 			util.DeleteFile(fmt.Sprintf("%s/test/data3/data.txt", directory))
 			util.DeleteFile(fmt.Sprintf("%s/test/data.txt", directory))
 
-			err := backupClient.Restore(
+			err := mgr.Restore(
 				target,
 				directory,
 			)

@@ -3,7 +3,3 @@
 // license that can be found in the LICENSE file.
 
 package backup
-
-// PostgreSQL type
-type PostgreSQL struct {
-}

@@ -13,6 +13,7 @@ import (
 )
 
 // Logger middleware
+// TODO: Hide Secure Data from LOGS
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// before request

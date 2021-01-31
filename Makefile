@@ -149,6 +149,7 @@ api_mock:
 .PHONY: package
 package:
 	@echo ">> ============= Package Assets ============= <<"
+	-rm $(shell pwd)/web/.env
 	echo "VUE_APP_TOWER_URL=" > $(shell pwd)/web/.env.dist
 	cd web;$(NPM) run build
 	$(PKGER) list -include $(shell pwd)/web/dist

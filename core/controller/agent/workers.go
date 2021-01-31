@@ -9,7 +9,11 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/clivern/walrus/core/backup"
+	"github.com/clivern/walrus/core/model"
 	"github.com/clivern/walrus/core/module"
+	"github.com/clivern/walrus/core/service"
+	"github.com/clivern/walrus/core/storage"
 	"github.com/clivern/walrus/core/util"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +24,7 @@ import (
 // Workers type
 type Workers struct {
 	broadcast chan module.BackupMessage
+	wire      *module.Wire
 }
 
 // NewWorkers get a new workers instance
@@ -28,6 +33,9 @@ func NewWorkers() *Workers {
 	result.broadcast = make(chan module.BackupMessage, viper.GetInt(
 		fmt.Sprintf("%s.workers.buffer", viper.GetString("role")),
 	))
+
+	httpClient := service.NewHTTPClient(30)
+	result.wire = module.NewWire(httpClient, nil)
 
 	return result
 }
@@ -43,10 +51,10 @@ func (w *Workers) BroadcastRequest(c *gin.Context, rawBody []byte) {
 			"error": err.Error(),
 		}).Error(`Invalid backup message`)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"errorMessage": "Internal server error",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Error! Invalid request",
 		})
-
 		return
 	}
 
@@ -89,7 +97,28 @@ func (w *Workers) ProcessAction(notifyChannel chan<- module.BackupMessage, wg *s
 			"message":        message,
 		}).Info(`Worker received a new message`)
 
-		// ~
+		s3 := storage.NewS3Client(
+			message.Settings["backup_s3_key"],
+			message.Settings["backup_s3_secret"],
+			message.Settings["backup_s3_endpoint"],
+			message.Settings["backup_s3_region"],
+		)
+
+		backupMgr := backup.NewManager(s3)
+
+		err := backupMgr.ProcessBackup(message)
+
+		if err != nil {
+			log.WithFields(log.Fields{
+				"correlation_id": message.CorrelationID,
+				"message":        message,
+				"error":          err.Error(),
+			}).Info(`Worker encountered error while processing`)
+
+			message.Job.Status = model.FailedStatus
+		} else {
+			message.Job.Status = model.SuccessStatus
+		}
 
 		log.WithFields(log.Fields{
 			"correlation_id": message.CorrelationID,
@@ -105,6 +134,19 @@ func (w *Workers) ProcessAction(notifyChannel chan<- module.BackupMessage, wg *s
 // NotifyTower notifies tower
 func (w *Workers) NotifyTower(notifyChannel <-chan module.BackupMessage) {
 	for message := range notifyChannel {
+
+		err := w.wire.AgentPostback(message.Job.ID, message.Job.CronID, message.Job.Status)
+
+		if err != nil {
+			log.WithFields(log.Fields{
+				"correlation_id": message.CorrelationID,
+				"message":        message,
+				"error":          err.Error(),
+			}).Info(`Worker failed while notifying tower`)
+
+			continue
+		}
+
 		log.WithFields(log.Fields{
 			"correlation_id": message.CorrelationID,
 			"message":        message,

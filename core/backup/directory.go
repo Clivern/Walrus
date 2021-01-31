@@ -17,13 +17,9 @@ import (
 	"github.com/clivern/walrus/core/util"
 )
 
-// Directory struct
-type Directory struct {
-}
-
 // Backup creates a backup of any directory
 // directory must be absolute path like /etc/app and archive same /etc/app.tar.gzip"
-func (d *Directory) Backup(directory, archive string) error {
+func (m *Manager) Backup(directory, archive string) error {
 	var buf bytes.Buffer
 
 	if !util.DirExists(directory) {
@@ -92,7 +88,7 @@ func (d *Directory) Backup(directory, archive string) error {
 }
 
 // Restore uncompress .tar.gzip archive
-func (d *Directory) Restore(archive, destination string) error {
+func (m *Manager) Restore(archive, destination string) error {
 
 	if !util.FileExists(archive) {
 		return fmt.Errorf("Unable to find archive %s", archive)
