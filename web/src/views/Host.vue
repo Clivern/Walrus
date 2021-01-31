@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <template>
-	<div class="columns is-mobile is-centered">
+	<div class="columns is-desktop is-centered">
 		<div class="column is-9">
 			<section>
 				<b-table
@@ -101,7 +101,7 @@
 			>
 
 			<b-modal :active.sync="form.isActive" has-modal-card>
-				<div class="modal-card" style="width: auto; min-width: 500px">
+				<div class="modal-card" style="width: auto">
 					<header class="modal-card-head">
 						<p class="modal-card-title">{{ form.title }}</p>
 					</header>

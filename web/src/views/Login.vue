@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <template>
-	<div class="columns is-mobile is-centered">
+	<div class="columns is-desktop is-centered">
 		<div class="column is-4">
 			<template v-if="setup">
 				<div class="field">

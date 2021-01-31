@@ -17,8 +17,6 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$http = axios;
 
-Vue.component("notification", Notification);
-
 new Vue({
 	store: store,
 	router,
