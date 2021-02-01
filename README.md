@@ -5,7 +5,7 @@
     <p align="center">
         <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Build/badge.svg"></a>
         <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg"></a>
-        <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-0.1.0-red.svg"></a>
+        <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-0.1.1-red.svg"></a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Walrus"><img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=0.0.1"></a>
         <a href="https://hub.docker.com/r/clivern/walrus"><img src="https://img.shields.io/badge/Docker-Latest-green"></a>
         <a href="https://github.com/Clivern/Walrus/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg"></a>
@@ -13,7 +13,7 @@
 </p>
 <br/>
 <p align="center">
-    <img src="/assets/chart.png?v=0.1.0" width="80%" />
+    <img src="/assets/chart.png?v=0.1.1" width="80%" />
 </p>
 
 
@@ -27,7 +27,7 @@ Walrus is a fast, secure and reliable backup system suitable for modern infrastr
 Download [the latest walrus binary](https://github.com/Clivern/Walrus/releases). Make it executable from everywhere.
 
 ```zsh
-$ curl -sL https://github.com/Clivern/Walrus/releases/download/x.x.x/walrus_x.x.x_OS.tar.gz | tar xz
+$ curl -sL https://github.com/Clivern/Walrus/releases/download/vx.x.x/walrus_x.x.x_OS.tar.gz | tar xz
 ```
 
 Then install etcd cluster or single node, please refer to etcd docs or bin directory inside this repository.

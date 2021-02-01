@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -93,7 +94,7 @@ func (s *S3) UploadFile(bucket, localPath, remotePath string, includeChecksum bo
 	checksumContent := fmt.Sprintf("SHA256 CheckSum: %x\n", h.Sum(nil))
 
 	checksumPath := fmt.Sprintf("%s-checksum.txt",
-		strings.TrimSuffix(remotePath, filepath.Ext(remotePath)),
+		strings.TrimSuffix(remotePath, ".tar.gz"),
 	)
 
 	tmpFile, err := ioutil.TempFile(os.TempDir(), "walrus-")
@@ -133,4 +134,73 @@ func (s *S3) UploadFile(bucket, localPath, remotePath string, includeChecksum bo
 	}
 
 	return nil
+}
+
+// ListFiles lists files
+func (s *S3) ListFiles(bucket, prefix string) ([]string, error) {
+	newSession := session.New(s.config)
+	s3Client := s3.New(newSession)
+
+	result := []string{}
+
+	err := s3Client.ListObjectsPages(&s3.ListObjectsInput{
+		Bucket: aws.String(bucket),
+		Prefix: aws.String(prefix),
+	}, func(p *s3.ListObjectsOutput, last bool) (shouldContinue bool) {
+		for _, obj := range p.Contents {
+			result = append(result, fmt.Sprintf("%s", *obj.Key))
+		}
+
+		return true
+	})
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+// DeleteFile delete a file
+func (s *S3) DeleteFile(bucket, file string) error {
+	newSession := session.New(s.config)
+	s3Client := s3.New(newSession)
+
+	_, err := s3Client.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(file),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// CleanupOld apply a retention policy over a certain path
+func (s *S3) CleanupOld(bucket, path string, beforeDays int) (int, error) {
+	files, err := s.ListFiles(bucket, path)
+
+	count := 0
+
+	deleteBefore := time.Now().Add(time.Duration(-1*beforeDays*24) * time.Hour)
+
+	if err != nil {
+		return count, err
+	}
+
+	for _, file := range files {
+		fileName := filepath.Base(file)
+		fileName = strings.TrimSuffix(fileName, ".tar.gz")
+		fileName = strings.TrimSuffix(fileName, "-checksum.txt")
+		fileTime, _ := time.Parse("2006-01-02_15-04-05", fileName)
+
+		if fileTime.Before(deleteBefore) {
+			count++
+			s.DeleteFile(bucket, file)
+		}
+	}
+
+	return count, nil
 }

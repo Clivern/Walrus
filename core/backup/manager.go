@@ -69,7 +69,16 @@ func (m *Manager) ProcessBackup(message module.BackupMessage) error {
 		true,
 	)
 
+	if err != nil {
+		return err
+	}
+
 	// Delete Old Backups (Retention Policy)
+	_, err = m.S3.CleanupOld(
+		message.Settings["backup_s3_bucket"],
+		fmt.Sprintf("%s/%s", message.Cron.Hostname, message.Cron.ID),
+		message.Cron.Request.RetentionDays,
+	)
 
 	return err
 }
