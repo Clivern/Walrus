@@ -145,7 +145,6 @@ func (w *Wire) SendJobToHostAgent(message BackupMessage) error {
 	agent := &model.AgentData{}
 
 	// TODO: Select a random running agents
-	// TODO: Cleanup stale stopped agents
 	for _, v := range agents {
 		if v.Status == model.UpStatus {
 			agent = v
@@ -218,13 +217,13 @@ func (w *Wire) SendJobToHostAgent(message BackupMessage) error {
 
 	body, _ := util.ConvertToJSON(message)
 
-	if viper.GetString("agent.tower.encryptionKey") == "" {
-		return fmt.Errorf("Config agent.tower.encryptionKey is missing")
+	if viper.GetString("tower.api.encryptionKey") == "" {
+		return fmt.Errorf("Config tower.api.encryptionKey is missing")
 	}
 
 	bodyByte, err := util.Encrypt(
 		[]byte(body),
-		viper.GetString("agent.tower.encryptionKey"),
+		viper.GetString("tower.api.encryptionKey"),
 	)
 
 	if err != nil {

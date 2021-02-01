@@ -221,10 +221,12 @@ func (a *Agent) CountOnlineAgents(hostname string) (int, error) {
 				return count, err
 			}
 
-			// Agent become inactive if heartbeat missing for more than
-			// 10 min
+			// Agent become inactive if heartbeat missing for more than 10 min
 			if recordData.Status == UpStatus && recordData.LastStatusCheck >= time.Now().Add(-10*time.Minute).Unix() {
 				count++
+			} else {
+				// Delete stale agent (offline for more than 10 min)
+				a.DeleteAgent(recordData.Hostname, recordData.ID)
 			}
 		}
 	}
