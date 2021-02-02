@@ -14,6 +14,10 @@
 <br/>
 <p align="center">
     <img src="/assets/chart.png?v=0.1.3" width="80%" />
+    <h3 align="center">Dashboard Screenshots</h3>
+    <img src="/assets/screenshot_01.png?v=0.1.3" width="80%" />
+    <img src="/assets/screenshot_02.png?v=0.1.3" width="80%" />
+    <img src="/assets/screenshot_03.png?v=0.1.3" width="80%" />
 </p>
 
 
@@ -201,7 +205,6 @@ $ make build_ui
 $ go get github.com/markbates/pkger/cmd/pkger
 $ make package
 ```
-
 
 ## Versioning
 
