@@ -217,9 +217,21 @@ export default {
 				hostId: "",
 				cronId: "",
 			},
+
+			// Loader
+			loader: {
+				isFullPage: true,
+				ref: null,
+			},
 		};
 	},
 	methods: {
+		loading() {
+			this.loader.ref = this.$buefy.loading.open({
+				container: this.loader.isFullPage ? null : this.$refs.element.$el
+			});
+		},
+
 		deleteHostAction(hostId) {
 			this.$buefy.dialog.confirm({
 				message: "Are you sure?",
@@ -408,6 +420,8 @@ export default {
 		},
 
 		loadInitialState() {
+			this.loading();
+
 			this.$store
 				.dispatch("host/getHostCronsAction", {
 					hostname: this.$route.params.hostId,
@@ -421,12 +435,16 @@ export default {
 						} else {
 							this.crons.data = [];
 						}
+
+						this.loader.ref.close();
 					},
 					(err) => {
 						this.$buefy.toast.open({
 							message: err.response.data.errorMessage,
 							type: "is-danger is-light",
 						});
+
+						this.loader.ref.close();
 					}
 				);
 		},

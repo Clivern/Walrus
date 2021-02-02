@@ -53,23 +53,43 @@ export default {
 	data() {
 		return {
 			tower_status: "down",
+
+			// Loader
+			loader: {
+				isFullPage: true,
+				ref: null,
+			},
 		};
+	},
+
+	methods: {
+		loading() {
+			this.loader.ref = this.$buefy.loading.open({
+				container: this.loader.isFullPage ? null : this.$refs.element.$el
+			});
+		},
 	},
 
 	mounted() {
 		this.$emit("refresh-state");
+
+		this.loading();
 
 		this.$store.dispatch("tower/fetchTowerReadiness").then(
 			() => {
 				this.tower_status = this.$store.getters[
 					"tower/getTowerReadiness"
 				].status;
+
+				this.loader.ref.close();
 			},
 			(err) => {
 				this.$buefy.toast.open({
 					message: err,
 					type: "is-danger is-light",
 				});
+
+				this.loader.ref.close();
 			}
 		);
 	},

@@ -75,12 +75,26 @@ export default {
 			paginationPosition: "bottom",
 			currentPage: 1,
 			perPage: 15,
+
+			// Loader
+			loader: {
+				isFullPage: true,
+				ref: null,
+			},
 		};
 	},
 
-	methods: {},
+	methods: {
+		loading() {
+			this.loader.ref = this.$buefy.loading.open({
+				container: this.loader.isFullPage ? null : this.$refs.element.$el
+			});
+		},
+	},
 
 	mounted() {
+		this.loading();
+
 		this.$store.dispatch("host/getHostsAction").then(
 			() => {
 				let data = this.$store.getters["host/getHostsResult"].hosts;
@@ -90,12 +104,16 @@ export default {
 				} else {
 					this.data = [];
 				}
+
+				this.loader.ref.close();
 			},
 			(err) => {
 				this.$buefy.toast.open({
 					message: err.response.data.errorMessage,
 					type: "is-danger is-light",
 				});
+
+				this.loader.ref.close();
 			}
 		);
 	},

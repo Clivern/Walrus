@@ -51,10 +51,22 @@ export default {
 				backup_s3_region: "",
 				backup_s3_bucket: "",
 			},
+
+			// Loader
+			loader: {
+				isFullPage: true,
+				ref: null,
+			},
 		};
 	},
 
 	methods: {
+		loading() {
+			this.loader.ref = this.$buefy.loading.open({
+				container: this.loader.isFullPage ? null : this.$refs.element.$el
+			});
+		},
+
 		updateEvent() {
 			this.form.button_disabled = true;
 
@@ -94,6 +106,8 @@ export default {
 	},
 
 	mounted() {
+		this.loading();
+
 		this.$store.dispatch("settings/getSettingsAction").then(
 			() => {
 				let settings = this.$store.getters["settings/getSettingsResult"];
@@ -103,12 +117,16 @@ export default {
 				this.form.backup_s3_endpoint = settings.s3Endpoint;
 				this.form.backup_s3_region = settings.s3Region;
 				this.form.backup_s3_bucket = settings.s3Bucket;
+
+				this.loader.ref.close();
 			},
 			(err) => {
 				this.$buefy.toast.open({
 					message: err.response.data.errorMessage,
 					type: "is-danger is-light",
 				});
+
+				this.loader.ref.close();
 			}
 		);
 	},

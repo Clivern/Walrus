@@ -85,10 +85,22 @@ export default {
 				user_name: "",
 				button_disabled: false,
 			},
+
+			// Loader
+			loader: {
+				isFullPage: true,
+				ref: null,
+			},
 		};
 	},
 
 	methods: {
+		loading() {
+			this.loader.ref = this.$buefy.loading.open({
+				container: this.loader.isFullPage ? null : this.$refs.element.$el
+			});
+		},
+
 		loginEvent() {
 			this.form.button_disabled = true;
 
@@ -164,6 +176,8 @@ export default {
 	},
 
 	mounted() {
+		this.loading();
+
 		this.$store.dispatch("auth/fetchInfo").then(
 			() => {
 				let info = this.$store.getters["auth/getTowerInfo"];
@@ -176,12 +190,16 @@ export default {
 						type: "is-info is-light",
 					});
 				}
+
+				this.loader.ref.close();
 			},
 			(err) => {
 				this.$buefy.toast.open({
 					message: err.response.data.errorMessage,
 					type: "is-danger is-light",
 				});
+
+				this.loader.ref.close();
 			}
 		);
 	},
