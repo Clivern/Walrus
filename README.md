@@ -14,12 +14,15 @@
 <br/>
 <p align="center">
     <img src="/assets/chart.png?v=0.1.3" width="80%" />
-    <h3 align="center">Dashboard Screenshots</h3>
-    <img src="/assets/screenshot_01.png?v=0.1.3" width="80%" />
-    <img src="/assets/screenshot_02.png?v=0.1.3" width="80%" />
-    <img src="/assets/screenshot_03.png?v=0.1.3" width="80%" />
-</p>
 
+</p>
+<p align="center">
+    <h3 align="center">Dashboard Screenshots</h3>
+    <p align="center">
+        <img src="/assets/screenshot_02.png?v=0.1.3" width="90%" />
+        <img src="/assets/screenshot_03.png?v=0.1.3" width="90%" />
+    </p>
+</p>
 
 Walrus is a fast, secure and reliable backup system suitable for modern infrastructure. With walrus, you can backup services like MySQL, PostgreSQL, Redis, etcd or a complete directory with a short interval and low overhead. It supports AWS S3, digitalocean spaces and any S3-compatible object storage service.
 
