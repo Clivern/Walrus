@@ -2,7 +2,7 @@ version: '3'
 
 services:
   walrus:
-    image: 'clivern/walrus:latest'
+    image: 'clivern/walrus:release-v0.1.3'
     ports:
       - "8000:8000"
     command: '/app/walrus tower -c /app/configs/config.yml'
