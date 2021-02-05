@@ -203,7 +203,7 @@ func GetHostCrons(c *gin.Context) {
 	var crons []HostCron
 
 	for _, v := range data {
-		pendingCount, _ := jobStore.CountHostJobs(hostname, model.PendingStatus)
+		pendingCount, _ := jobStore.CountHostJobs(hostname, v.ID, model.PendingStatus)
 
 		crons = append(crons, HostCron{
 			ID:           v.ID,

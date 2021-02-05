@@ -43,9 +43,9 @@ func (m *Manager) ProcessBackup(message module.BackupMessage) error {
 		fileName,
 	)
 
-	// Backup
+	// BackupDirectory
 	if message.Cron.Request.Type == model.BackupDirectory {
-		err := m.Backup(
+		err := m.BackupDirectory(
 			message.Cron.Request.Directory,
 			localPath,
 		)

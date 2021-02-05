@@ -209,7 +209,7 @@ func (j *Job) GetHostJobs(hostname string) ([]*JobRecord, error) {
 }
 
 // CountHostJobs counts host jobs
-func (j *Job) CountHostJobs(hostname, status string) (int, error) {
+func (j *Job) CountHostJobs(hostname, cronID, status string) (int, error) {
 
 	log.Debug("Count host jobs")
 
@@ -236,7 +236,7 @@ func (j *Job) CountHostJobs(hostname, status string) (int, error) {
 				return count, err
 			}
 
-			if recordData.Status != status {
+			if recordData.Status != status || cronID != recordData.CronID {
 				continue
 			}
 

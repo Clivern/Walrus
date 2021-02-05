@@ -41,7 +41,7 @@ func TestBackupRestoreDirectory(t *testing.T) {
 		})
 
 		g.It("It should backup", func() {
-			err := mgr.Backup(
+			err := mgr.BackupDirectory(
 				fmt.Sprintf("%s/test/", directory),
 				target,
 			)
@@ -55,9 +55,9 @@ func TestBackupRestoreDirectory(t *testing.T) {
 			util.DeleteFile(fmt.Sprintf("%s/test/data3/data.txt", directory))
 			util.DeleteFile(fmt.Sprintf("%s/test/data.txt", directory))
 
-			err := mgr.Restore(
+			err := mgr.RestoreDirectory(
 				target,
-				directory,
+				"/",
 			)
 
 			g.Assert(err).Equal(nil)
