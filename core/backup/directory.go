@@ -16,8 +16,8 @@ import (
 // BackupDirectory creates a backup of any directory
 // directory must be absolute path like /etc/app and archive same /etc/app.tar.gz"
 func (m *Manager) BackupDirectory(directory, archive string) error {
-	if !util.DirExists(directory) {
-		return fmt.Errorf("Unable to find directory %s", directory)
+	if !util.DirExists(directory) && !util.FileExists(directory) {
+		return fmt.Errorf("Unable to find directory or file %s", directory)
 	}
 	// Get the full executable path for the editor.
 	executable, err := exec.LookPath("tar")
@@ -33,13 +33,9 @@ func (m *Manager) BackupDirectory(directory, archive string) error {
 
 	cmd := exec.Command(command[0], command[1:]...)
 
-	null, _ := os.Open(os.DevNull)
-
-	defer null.Close()
-
 	cmd.Stdin = os.Stdin
-	cmd.Stdout = null
-	cmd.Stderr = null
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
 
 	return cmd.Run()
 }
@@ -64,13 +60,9 @@ func (m *Manager) RestoreDirectory(archive, destination string) error {
 
 	cmd := exec.Command(command[0], command[1:]...)
 
-	null, _ := os.Open(os.DevNull)
-
-	defer null.Close()
-
 	cmd.Stdin = os.Stdin
-	cmd.Stdout = null
-	cmd.Stderr = null
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
 
 	return cmd.Run()
 }

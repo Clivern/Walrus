@@ -274,9 +274,19 @@ func CreateHostCron(c *gin.Context) {
 		Hostname: hostname,
 		Name:     inputs["name"],
 		Request: model.Request{
-			Type:          model.BackupDirectory,
+			Type:          inputs["type"],
 			Directory:     inputs["directory"],
 			RetentionDays: retention,
+
+			// MySQL
+			MySQLHost:         inputs["mysqlHost"],
+			MySQLPort:         inputs["mysqlPort"],
+			MySQLUsername:     inputs["mysqlUsername"],
+			MySQLPassword:     inputs["mysqlPassword"],
+			MySQLAllDatabases: bool(inputs["mysqlAllDatabases"] == "true"),
+			MySQLDatabase:     inputs["mysqlDatabase"],
+			MySQLTable:        inputs["mysqlTable"],
+			MySQLOptions:      inputs["mysqlOptions"],
 		},
 		Interval:     interval,
 		IntervalType: inputs["intervalType"],
@@ -370,6 +380,18 @@ func UpdateHostCron(c *gin.Context) {
 	cronData.Name = inputs["name"]
 	cronData.Request.Directory = inputs["directory"]
 	cronData.Request.RetentionDays = retention
+	cronData.Request.Type = inputs["type"]
+
+	// MySQL
+	cronData.Request.MySQLHost = inputs["mysqlHost"]
+	cronData.Request.MySQLPort = inputs["mysqlPort"]
+	cronData.Request.MySQLUsername = inputs["mysqlUsername"]
+	cronData.Request.MySQLPassword = inputs["mysqlPassword"]
+	cronData.Request.MySQLAllDatabases = bool(inputs["mysqlAllDatabases"] == "true")
+	cronData.Request.MySQLDatabase = inputs["mysqlDatabase"]
+	cronData.Request.MySQLTable = inputs["mysqlTable"]
+	cronData.Request.MySQLOptions = inputs["mysqlOptions"]
+
 	cronData.Interval = interval
 	cronData.IntervalType = inputs["intervalType"]
 
@@ -493,6 +515,15 @@ func GetHostCron(c *gin.Context) {
 			"type":          cronData.Request.Type,
 			"directory":     cronData.Request.Directory,
 			"retentionDays": cronData.Request.RetentionDays,
+
+			"mysqlHost":         cronData.Request.MySQLHost,
+			"mysqlPort":         cronData.Request.MySQLPort,
+			"mysqlUsername":     cronData.Request.MySQLUsername,
+			"mysqlPassword":     cronData.Request.MySQLPassword,
+			"mysqlAllDatabases": strconv.FormatBool(cronData.Request.MySQLAllDatabases),
+			"mysqlDatabase":     cronData.Request.MySQLDatabase,
+			"mysqlTable":        cronData.Request.MySQLTable,
+			"mysqlOptions":      cronData.Request.MySQLOptions,
 		},
 		"createdAt": cronData.CreatedAt,
 		"lastRun":   cronData.LastRun,

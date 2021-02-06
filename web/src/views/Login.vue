@@ -97,7 +97,7 @@ export default {
 	methods: {
 		loading() {
 			this.loader.ref = this.$buefy.loading.open({
-				container: this.loader.isFullPage ? null : this.$refs.element.$el
+				container: this.loader.isFullPage ? null : this.$refs.element.$el,
 			});
 		},
 

@@ -55,6 +55,28 @@ func (m *Manager) ProcessBackup(message module.BackupMessage) error {
 		}
 
 		defer util.DeleteFile(localPath)
+	} else if message.Cron.Request.Type == model.BackupMySQL {
+		mysql := &MySQL{
+			Host:         message.Cron.Request.MySQLHost,
+			Port:         message.Cron.Request.MySQLPort,
+			Username:     message.Cron.Request.MySQLUsername,
+			Password:     message.Cron.Request.MySQLPassword,
+			AllDatabases: message.Cron.Request.MySQLAllDatabases,
+			Database:     message.Cron.Request.MySQLDatabase,
+			Table:        message.Cron.Request.MySQLTable,
+			Options:      message.Cron.Request.MySQLOptions,
+		}
+
+		err := m.BackupMySQL(
+			mysql,
+			localPath,
+		)
+
+		if err != nil {
+			return err
+		}
+
+		defer util.DeleteFile(localPath)
 	}
 
 	// Create bucket if not exist (ignore error)

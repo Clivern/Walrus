@@ -29,12 +29,7 @@
 						</span>
 					</b-table-column>
 
-					<b-table-column
-						field="name"
-						label="Name"
-						centered
-						v-slot="props"
-					>
+					<b-table-column field="name" label="Name" centered v-slot="props">
 						<span class="tag is-light">
 							{{ props.row.name }}
 						</span>
@@ -133,17 +128,99 @@
 								expanded
 							>
 								<option value="@BackupDirectory">Directory</option>
+								<option value="@BackupMySQL">MySQL</option>
 							</b-select>
 						</b-field>
-						<b-field label="Directory Path">
-							<b-input
-								type="text"
-								v-model="form.directory"
-								placeholder="/etc/backups/app_database"
-								required
-							>
-							</b-input>
-						</b-field>
+
+						<template v-if="form.type == '@BackupDirectory'">
+							<b-field label="Directory Path">
+								<b-input
+									type="text"
+									v-model="form.directory"
+									placeholder="/etc/backups/app_database"
+									required
+								>
+								</b-input>
+							</b-field>
+						</template>
+
+						<template v-if="form.type == '@BackupMySQL'">
+							<b-field label="MySQL Host">
+								<b-input
+									type="text"
+									v-model="form.mysqlHost"
+									placeholder="127.0.0.1"
+									required
+								>
+								</b-input>
+							</b-field>
+							<b-field label="MySQL Port">
+								<b-input
+									type="text"
+									v-model="form.mysqlPort"
+									placeholder="3306"
+									required
+								>
+								</b-input>
+							</b-field>
+							<b-field label="MySQL Username">
+								<b-input
+									type="text"
+									v-model="form.mysqlUsername"
+									placeholder="root"
+									required
+								>
+								</b-input>
+							</b-field>
+							<b-field label="MySQL Password">
+								<b-input
+									type="text"
+									v-model="form.mysqlPassword"
+									placeholder="root"
+									required
+								>
+								</b-input>
+							</b-field>
+
+							<b-field label="MySQL Database Name">
+								<b-input
+									type="text"
+									v-model="form.mysqlDatabase"
+									placeholder=""
+									required
+								>
+								</b-input>
+							</b-field>
+							<b-field label="MySQL Table Name">
+								<b-input
+									type="text"
+									v-model="form.mysqlTable"
+									placeholder=""
+									required
+								>
+								</b-input>
+							</b-field>
+							<b-field label="Backup All Databases">
+								<b-select
+									v-model="form.mysqlAllDatabases"
+									placeholder="Select to backup all"
+									expanded
+								>
+									<option value="false">No</option>
+									<option value="true">Yes</option>
+								</b-select>
+							</b-field>
+							<b-field label="MySQL Dump Options">
+								<b-input
+									type="text"
+									v-model="form.mysqlOptions"
+									placeholder="--single-transaction,--quick,--lock-tables=false"
+									required
+								>
+								</b-input>
+							</b-field>
+						</template>
+
 						<b-field label="Backup Interval Type">
 							<b-select
 								v-model="form.intervalType"
@@ -212,6 +289,16 @@ export default {
 				interval: 30,
 				retention: 10,
 				directory: "",
+
+				mysqlHost: "127.0.0.1",
+				mysqlPort: "3306",
+				mysqlUsername: "root",
+				mysqlPassword: "root",
+				mysqlAllDatabases: "false",
+				mysqlDatabase: "",
+				mysqlTable: "",
+				mysqlOptions: "--single-transaction,--quick,--lock-tables=false",
+
 				intervalType: "@minute",
 				type: "@BackupDirectory",
 				hostId: "",
@@ -228,7 +315,7 @@ export default {
 	methods: {
 		loading() {
 			this.loader.ref = this.$buefy.loading.open({
-				container: this.loader.isFullPage ? null : this.$refs.element.$el
+				container: this.loader.isFullPage ? null : this.$refs.element.$el,
 			});
 		},
 
@@ -328,6 +415,16 @@ export default {
 							this.form.interval = data.interval;
 							this.form.retention = data.request.retentionDays;
 							this.form.directory = data.request.directory;
+
+							this.form.mysqlHost = data.request.mysqlHost;
+							this.form.mysqlPort = data.request.mysqlPort;
+							this.form.mysqlUsername = data.request.mysqlUsername;
+							this.form.mysqlPassword = data.request.mysqlPassword;
+							this.form.mysqlAllDatabases = data.request.mysqlAllDatabases;
+							this.form.mysqlDatabase = data.request.mysqlDatabase;
+							this.form.mysqlTable = data.request.mysqlTable;
+							this.form.mysqlOptions = data.request.mysqlOptions;
+
 							this.form.intervalType = data.intervalType;
 							this.form.type = data.request.type;
 						}
@@ -359,6 +456,16 @@ export default {
 			this.form.type = "@BackupDirectory";
 			this.form.hostId = hostId;
 			this.form.cronId = "";
+
+			this.form.mysqlHost = "127.0.0.1";
+			this.form.mysqlPort = "3306";
+			this.form.mysqlUsername = "root";
+			this.form.mysqlPassword = "root";
+			this.form.mysqlAllDatabases = "false";
+			this.form.mysqlDatabase = "";
+			this.form.mysqlTable = "";
+			this.form.mysqlOptions =
+				"--single-transaction,--quick,--lock-tables=false";
 		},
 
 		closeFormAction() {
@@ -372,6 +479,16 @@ export default {
 			this.form.type = "@BackupDirectory";
 			this.form.hostId = "";
 			this.form.cronId = "";
+
+			this.form.mysqlHost = "127.0.0.1";
+			this.form.mysqlPort = "3306";
+			this.form.mysqlUsername = "root";
+			this.form.mysqlPassword = "root";
+			this.form.mysqlAllDatabases = "false";
+			this.form.mysqlDatabase = "";
+			this.form.mysqlTable = "";
+			this.form.mysqlOptions =
+				"--single-transaction,--quick,--lock-tables=false";
 		},
 
 		submitForm() {
@@ -390,6 +507,16 @@ export default {
 					retention: this.form.retention.toString(),
 					directory: this.form.directory,
 					intervalType: this.form.intervalType,
+
+					mysqlHost: this.form.mysqlHost,
+					mysqlPort: this.form.mysqlPort,
+					mysqlUsername: this.form.mysqlUsername,
+					mysqlPassword: this.form.mysqlPassword,
+					mysqlAllDatabases: this.form.mysqlAllDatabases,
+					mysqlDatabase: this.form.mysqlDatabase,
+					mysqlTable: this.form.mysqlTable,
+					mysqlOptions: this.form.mysqlOptions,
+
 					type: this.form.type,
 				})
 				.then(

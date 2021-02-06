@@ -50,6 +50,15 @@ type Request struct {
 	Type          string `json:"type"` // @BackupMySQL, @BackupDirectory, @BackupRedis, @BackupPostgreSQL
 	Directory     string `json:"directory"`
 	RetentionDays int    `json:"retentionDays"`
+
+	MySQLHost         string `json:"mysqlHost"`
+	MySQLPort         string `json:"mysqlPort"`
+	MySQLUsername     string `json:"mysqlUsername"`
+	MySQLPassword     string `json:"mysqlPassword"`
+	MySQLAllDatabases bool   `json:"mysqlAllDatabases"`
+	MySQLDatabase     string `json:"mysqlDatabase"`
+	MySQLTable        string `json:"mysqlTable"`
+	MySQLOptions      string `json:"mysqlOptions"`
 }
 
 // CronRecord type
