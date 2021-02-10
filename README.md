@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="/assets/gopher.png" width="230" />
+    <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/gopher.png" width="230" />
     <h3 align="center">Walrus</h3>
     <p align="center">Fast, Secure and Reliable System Backup, Set up in Minutes.</p>
     <p align="center">
@@ -13,14 +13,14 @@
 </p>
 <br/>
 <p align="center">
-    <img src="/assets/chart.png?v=0.1.5" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/chart.png?v=0.1.5" width="80%" />
 
 </p>
 <p align="center">
     <h3 align="center">Dashboard Screenshots</h3>
     <p align="center">
-        <img src="/assets/screenshot_02.png?v=0.1.5" width="90%" />
-        <img src="/assets/screenshot_03.png?v=0.1.5" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_02.png?v=0.1.5" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_03.png?v=0.1.5" width="90%" />
     </p>
 </p>
 
