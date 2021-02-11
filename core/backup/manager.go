@@ -80,7 +80,7 @@ func (m *Manager) ProcessBackup(message module.BackupMessage) error {
 	}
 
 	// Create bucket if not exist (ignore error)
-	// TODO: conside the case where bucket is missing and it fails to create
+	// TODO consider the case where bucket is missing and it fails to create
 	m.S3.CreateBucket(message.Settings["backup_s3_bucket"])
 
 	// Upload to S3
