@@ -13,10 +13,10 @@
             <img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Walrus/releases">
-            <img src="https://img.shields.io/badge/Version-1.1.0-red.svg">
+            <img src="https://img.shields.io/badge/Version-1.2.0-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Walrus">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=1.1.0">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=1.2.0">
         </a>
         <a href="https://godoc.org/github.com/clivern/walrus">
             <img src="https://godoc.org/github.com/clivern/walrus?status.svg">
@@ -31,13 +31,13 @@
 </p>
 <br/>
 <p align="center">
-    <img src="/static/chart.png?v=1.1.0" width="80%" />
+    <img src="/static/chart.png?v=1.2.0" width="80%" />
 </p>
 <p align="center">
     <h3 align="center">Dashboard Screenshots</h3>
     <p align="center">
-        <img src="/static/screenshot_02.png?v=1.1.0" width="90%" />
-        <img src="/static/screenshot_03.png?v=1.1.0" width="90%" />
+        <img src="/static/screenshot_02.png?v=1.2.0" width="90%" />
+        <img src="/static/screenshot_03.png?v=1.2.0" width="90%" />
     </p>
 </p>
 
