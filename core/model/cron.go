@@ -39,10 +39,20 @@ const (
 	BackupMySQL = "@BackupMySQL"
 
 	// BackupRedis constant
+	// TODO Redis Backup Support
 	BackupRedis = "@BackupRedis"
 
 	// BackupPostgreSQL constant
+	// TODO PostgreSQL Backup Support
 	BackupPostgreSQL = "@BackupPostgreSQL"
+
+	// BackupEtcd constant
+	// TODO Etcd Backup Support
+	BackupEtcd = "@BackupEtcd"
+
+	// BackupSQLite constant
+	// TODO SQLite Backup Support
+	BackupSQLite = "@BackupSQLite"
 )
 
 // Request type
