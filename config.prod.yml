@@ -1,0 +1,106 @@
+# Tower configs
+tower:
+    # Env mode (dev or prod)
+    mode: ${WALRUS_APP_MODE:-prod}
+    # HTTP port
+    port: ${WALRUS_API_PORT:-80}
+    # URL
+    url: ${WALRUS_API_URL:-http://127.0.0.1}
+    # TLS configs
+    tls:
+        status: ${WALRUS_API_TLS_STATUS:-off}
+        pemPath: ${WALRUS_API_TLS_PEMPATH:-cert/server.pem}
+        keyPath: ${WALRUS_API_TLS_KEYPATH:-cert/server.key}
+
+    # API Configs
+    api:
+        key: ${WALRUS_API_KEY:-6c68b836-6f8e-465e-b59f-89c1db53afca}
+        encryptionKey: ${WALRUS_ENCRYPTION_KEY:-B?E(H+Mb}
+
+    # Async Workers
+    workers:
+        # Queue max capacity
+        buffer: ${WALRUS_WORKERS_CHAN_CAPACITY:-5000}
+        # Number of concurrent workers
+        count: ${WALRUS_WORKERS_COUNT:-4}
+
+    # Runtime, Requests/Response and Walrus Metrics
+    metrics:
+        prometheus:
+            # Route for the metrics endpoint
+            endpoint: ${WALRUS_METRICS_PROM_ENDPOINT:-/metrics}
+
+    # Application Database
+    database:
+        # database driver
+        driver: ${WALRUS_DB_DRIVER:-etcd}
+
+        etcd:
+            # etcd database name or prefix
+            databaseName: ${WALRUS_DB_ETCD_DB:-walrus}
+            # etcd username
+            username: ${WALRUS_DB_ETCD_USERNAME:- }
+            # etcd password
+            password: ${WALRUS_DB_ETCD_PASSWORD:- }
+            # etcd endpoints
+            endpoints: ${WALRUS_DB_ETCD_ENDPOINTS:-http://127.0.0.1:2379}
+            # Timeout in seconds
+            timeout: 30
+
+    # Log configs
+    log:
+        # Log level, it can be debug, info, warn, error, panic, fatal
+        level: ${WALRUS_LOG_LEVEL:-info}
+        # output can be stdout or abs path to log file /var/logs/walrus.log
+        output: ${WALRUS_LOG_OUTPUT:-/var/logs/walrus.log}
+        # Format can be json
+        format: ${WALRUS_LOG_FORMAT:-json}
+
+
+# Agent configs
+agent:
+    # Env mode (dev or prod)
+    mode: ${WALRUS_APP_MODE:-prod}
+    # HTTP port
+    port: ${WALRUS_API_PORT:-8001}
+    # URL
+    url: ${WALRUS_API_URL:-http://127.0.0.1:8001}
+    # TLS configs
+    tls:
+        status: ${WALRUS_API_TLS_STATUS:-off}
+        pemPath: ${WALRUS_API_TLS_PEMPATH:-cert/server.pem}
+        keyPath: ${WALRUS_API_TLS_KEYPATH:-cert/server.key}
+
+    # API Configs
+    api:
+        key: ${WALRUS_API_KEY:-56e1a911-cc64-44af-9c5d-8c7e72ec96a1}
+
+    # Async Workers
+    workers:
+        # Queue max capacity
+        buffer: ${WALRUS_WORKERS_CHAN_CAPACITY:-5000}
+        # Number of concurrent workers
+        count: ${WALRUS_WORKERS_COUNT:-4}
+
+    # Tower Configs
+    tower:
+        url: ${WALRUS_TOWER_URL:-http://127.0.0.1}
+        # This must match the one defined in tower config file
+        apiKey: ${WALRUS_TOWER_API_KEY:-6c68b836-6f8e-465e-b59f-89c1db53afca}
+        # This must match the one defined in tower config file
+        encryptionKey: ${WALRUS_ENCRYPTION_KEY:-B?E(H+Mb}
+        # Time interval between agent ping checks
+        pingInterval: ${WALRUS_CHECK_INTERVAL:-60}
+
+    # Backup settings
+    backup:
+        tmpDir: ${WALRUS_BACKUP_TMP_DIR:-/tmp}
+
+    # Log configs
+    log:
+        # Log level, it can be debug, info, warn, error, panic, fatal
+        level: ${WALRUS_LOG_LEVEL:-info}
+        # output can be stdout or abs path to log file /var/logs/walrus.log
+        output: ${WALRUS_LOG_OUTPUT:-/var/logs/walrus.log}
+        # Format can be json
+        format: ${WALRUS_LOG_FORMAT:-json}
