@@ -23,7 +23,7 @@
     </p>
 </p>
 
-Walrus is a fast, secure and reliable backup system suitable for modern infrastructure. With walrus, you can backup services like MySQL, PostgreSQL, Redis, etcd or a complete directory with a short interval and low overhead. It supports AWS S3, digitalocean spaces and any S3-compatible object storage service.
+Walrus is a fast, secure and reliable backup system suitable for modern infrastructure. With walrus, you can backup services like SQLite, MySQL, PostgreSQL, Redis, etcd or a complete directory with a short interval and low overhead. It supports AWS S3, digitalocean spaces and any S3-compatible object storage service.
 
 
 ## Documentation
