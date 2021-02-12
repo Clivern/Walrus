@@ -55,6 +55,19 @@ func (m *Manager) ProcessBackup(message module.BackupMessage) error {
 		}
 
 		defer util.DeleteFile(localPath)
+
+	} else if message.Cron.Request.Type == model.BackupSQLite {
+		err := m.BackupDirectory(
+			message.Cron.Request.SQLitePath,
+			localPath,
+		)
+
+		if err != nil {
+			return err
+		}
+
+		defer util.DeleteFile(localPath)
+
 	} else if message.Cron.Request.Type == model.BackupMySQL {
 		mysql := &MySQL{
 			Host:         message.Cron.Request.MySQLHost,

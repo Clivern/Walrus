@@ -5,22 +5,21 @@
     <p align="center">
         <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Build/badge.svg"></a>
         <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg"></a>
-        <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-0.1.5-red.svg"></a>
-        <a href="https://goreportcard.com/report/github.com/Clivern/Walrus"><img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=0.1.5"></a>
+        <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-0.1.6-red.svg"></a>
+        <a href="https://goreportcard.com/report/github.com/Clivern/Walrus"><img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=0.1.6"></a>
         <a href="https://hub.docker.com/r/clivern/walrus"><img src="https://img.shields.io/badge/Docker-Latest-green"></a>
         <a href="https://github.com/Clivern/Walrus/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg"></a>
     </p>
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/chart.png?v=0.1.5" width="80%" />
-
+    <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/chart.png?v=0.1.6" width="80%" />
 </p>
 <p align="center">
     <h3 align="center">Dashboard Screenshots</h3>
     <p align="center">
-        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_02.png?v=0.1.5" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_03.png?v=0.1.5" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_02.png?v=0.1.6" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_03.png?v=0.1.6" width="90%" />
     </p>
 </p>
 

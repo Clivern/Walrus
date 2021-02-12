@@ -287,6 +287,9 @@ func CreateHostCron(c *gin.Context) {
 			MySQLDatabase:     inputs["mysqlDatabase"],
 			MySQLTable:        inputs["mysqlTable"],
 			MySQLOptions:      inputs["mysqlOptions"],
+
+			// SQLite
+			SQLitePath: inputs["sqlitePath"],
 		},
 		Interval:     interval,
 		IntervalType: inputs["intervalType"],
@@ -391,6 +394,9 @@ func UpdateHostCron(c *gin.Context) {
 	cronData.Request.MySQLDatabase = inputs["mysqlDatabase"]
 	cronData.Request.MySQLTable = inputs["mysqlTable"]
 	cronData.Request.MySQLOptions = inputs["mysqlOptions"]
+
+	// SQLite
+	cronData.Request.SQLitePath = inputs["sqlitePath"]
 
 	cronData.Interval = interval
 	cronData.IntervalType = inputs["intervalType"]
@@ -516,6 +522,7 @@ func GetHostCron(c *gin.Context) {
 			"directory":     cronData.Request.Directory,
 			"retentionDays": cronData.Request.RetentionDays,
 
+			// MySQL
 			"mysqlHost":         cronData.Request.MySQLHost,
 			"mysqlPort":         cronData.Request.MySQLPort,
 			"mysqlUsername":     cronData.Request.MySQLUsername,
@@ -524,6 +531,9 @@ func GetHostCron(c *gin.Context) {
 			"mysqlDatabase":     cronData.Request.MySQLDatabase,
 			"mysqlTable":        cronData.Request.MySQLTable,
 			"mysqlOptions":      cronData.Request.MySQLOptions,
+
+			// SQLite
+			"sqlitePath": cronData.Request.SQLitePath,
 		},
 		"createdAt": cronData.CreatedAt,
 		"lastRun":   cronData.LastRun,

@@ -129,6 +129,7 @@
 							>
 								<option value="@BackupDirectory">Directory</option>
 								<option value="@BackupMySQL">MySQL</option>
+								<option value="@BackupSQLite">SQLite</option>
 							</b-select>
 						</b-field>
 
@@ -138,6 +139,18 @@
 									type="text"
 									v-model="form.directory"
 									placeholder="/etc/backups/app_database"
+									required
+								>
+								</b-input>
+							</b-field>
+						</template>
+
+						<template v-if="form.type == '@BackupSQLite'">
+							<b-field label="SQLite Path">
+								<b-input
+									type="text"
+									v-model="form.sqlitePath"
+									placeholder="/etc/apps/db.sqlite3"
 									required
 								>
 								</b-input>
@@ -303,6 +316,8 @@ export default {
 				type: "@BackupDirectory",
 				hostId: "",
 				cronId: "",
+
+				sqlitePath: "/etc/apps/db.sqlite3",
 			},
 
 			// Loader
@@ -400,6 +415,7 @@ export default {
 			this.form.type = "@BackupDirectory";
 			this.form.hostId = hostId;
 			this.form.cronId = cronId;
+			this.form.sqlitePath = "/etc/apps/db.sqlite3";
 
 			this.$store
 				.dispatch("host/getHostCronAction", {
@@ -424,6 +440,7 @@ export default {
 							this.form.mysqlDatabase = data.request.mysqlDatabase;
 							this.form.mysqlTable = data.request.mysqlTable;
 							this.form.mysqlOptions = data.request.mysqlOptions;
+							this.form.sqlitePath = data.request.sqlitePath;
 
 							this.form.intervalType = data.intervalType;
 							this.form.type = data.request.type;
@@ -466,6 +483,8 @@ export default {
 			this.form.mysqlTable = "";
 			this.form.mysqlOptions =
 				"--single-transaction,--quick,--lock-tables=false";
+
+			this.form.sqlitePath = "/etc/apps/db.sqlite3";
 		},
 
 		closeFormAction() {
@@ -489,6 +508,8 @@ export default {
 			this.form.mysqlTable = "";
 			this.form.mysqlOptions =
 				"--single-transaction,--quick,--lock-tables=false";
+
+			this.form.sqlitePath = "/etc/apps/db.sqlite3";
 		},
 
 		submitForm() {
@@ -516,6 +537,8 @@ export default {
 					mysqlDatabase: this.form.mysqlDatabase,
 					mysqlTable: this.form.mysqlTable,
 					mysqlOptions: this.form.mysqlOptions,
+
+					sqlitePath: this.form.sqlitePath,
 
 					type: this.form.type,
 				})

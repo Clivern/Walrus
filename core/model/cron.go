@@ -51,13 +51,12 @@ const (
 	BackupEtcd = "@BackupEtcd"
 
 	// BackupSQLite constant
-	// TODO SQLite Backup Support
 	BackupSQLite = "@BackupSQLite"
 )
 
 // Request type
 type Request struct {
-	Type          string `json:"type"` // @BackupMySQL, @BackupDirectory, @BackupRedis, @BackupPostgreSQL
+	Type          string `json:"type"` // @BackupSQLite, @BackupMySQL, @BackupDirectory, @BackupRedis, @BackupPostgreSQL
 	Directory     string `json:"directory"`
 	RetentionDays int    `json:"retentionDays"`
 
@@ -69,6 +68,8 @@ type Request struct {
 	MySQLDatabase     string `json:"mysqlDatabase"`
 	MySQLTable        string `json:"mysqlTable"`
 	MySQLOptions      string `json:"mysqlOptions"`
+
+	SQLitePath string `json:"sqlitePath"`
 }
 
 // CronRecord type
