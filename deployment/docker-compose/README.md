@@ -1,4 +1,4 @@
-## Deploy on Docker
+## Deploy with Docker
 
 Install docker & docker-compose
 
@@ -31,7 +31,7 @@ Now tower should be running. User your server public IP and tower port configure
 $ curl https://ipinfo.io/ip
 ```
 
-In the host where backup has to take place, download walrus binary.
+In the host where backups have to take place, download walrus binary.
 
 ```bash
 $ curl -sL https://github.com/Clivern/Walrus/releases/download/v0.1.6/walrus_0.1.6_Linux_x86_64.tar.gz | tar xz
@@ -95,4 +95,5 @@ Then run the host agent.
 $ walrus agent -c /path/to/agent.config.yml
 ```
 
-If everything is right, you should be able to see the host shown in the tower dashboard with one active agent.
+If everything is right, you should be able to see the host shown in the tower dashboard with one active agent. You can create backup crons under that host and update s3 configs in `settings` tab.
+
