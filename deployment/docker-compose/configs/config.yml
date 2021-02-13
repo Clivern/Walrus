@@ -1,7 +1,7 @@
 # Tower configs
 tower:
     # Env mode (dev or prod)
-    mode: ${WALRUS_APP_MODE:-dev}
+    mode: ${WALRUS_APP_MODE:-prod}
     # HTTP port
     port: ${WALRUS_API_PORT:-8000}
     # URL

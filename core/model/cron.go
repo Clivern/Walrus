@@ -50,6 +50,10 @@ const (
 	// TODO Etcd Backup Support
 	BackupEtcd = "@BackupEtcd"
 
+	// BackupDockerVolume constant
+	// TODO Docker Volume Backup Support
+	BackupDockerVolume = "@BackupDockerVolume"
+
 	// BackupSQLite constant
 	BackupSQLite = "@BackupSQLite"
 )
