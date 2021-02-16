@@ -1,10 +1,9 @@
-GO           ?= go
-GOFMT        ?= $(GO)fmt
-NPM          ?= npm
-NPX          ?= npx
-RHINO        ?= rhino
+go           ?= go
+gofmt        ?= $(go)fmt
+npm          ?= npm
+npx          ?= npx
+rhino        ?= rhino
 pkgs          = ./...
-PKGER        ?= pkger
 
 
 help: Makefile
@@ -19,17 +18,17 @@ help: Makefile
 .PHONY: install_revive
 install_revive:
 	@echo ">> ============= Install Revive ============= <<"
-	$(GO) get github.com/mgechev/revive
+	$(go) get github.com/mgechev/revive
 
 
 ## style: Check code style.
 .PHONY: style
 style:
 	@echo ">> ============= Checking Code Style ============= <<"
-	@fmtRes=$$($(GOFMT) -d $$(find . -path ./vendor -prune -o -name '*.go' -print)); \
+	@fmtRes=$$($(gofmt) -d $$(find . -path ./vendor -prune -o -name '*.go' -print)); \
 	if [ -n "$${fmtRes}" ]; then \
 		echo "gofmt checking failed!"; echo "$${fmtRes}"; echo; \
-		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
+		echo "Please ensure you are using $$($(go) version) for formatting code."; \
 		exit 1; \
 	fi
 
@@ -51,24 +50,24 @@ check_license:
 .PHONY: test_short
 test_short:
 	@echo ">> ============= Running Short Tests ============= <<"
-	$(GO) clean -testcache
-	$(GO) test -mod=readonly -short $(pkgs)
+	$(go) clean -testcache
+	$(go) test -mod=readonly -short $(pkgs)
 
 
 ## test: Run test cases.
 .PHONY: test
 test:
 	@echo ">> ============= Running All Tests ============= <<"
-	$(GO) clean -testcache
-	$(GO) test -mod=readonly -tags=unit -v -cover $(pkgs)
+	$(go) clean -testcache
+	$(go) test -mod=readonly -tags=unit -v -cover $(pkgs)
 
 
 ## integration: Run integration test cases (Requires etcd)
 .PHONY: integration
 integration:
 	@echo ">> ============= Running All Tests ============= <<"
-	$(GO) clean -testcache
-	$(GO) test -mod=readonly -tags=integration -v -cover $(pkgs)
+	$(go) clean -testcache
+	$(go) test -mod=readonly -tags=integration -v -cover $(pkgs)
 
 
 ## lint: Lint the code.
@@ -82,23 +81,23 @@ lint:
 .PHONY: verify
 verify:
 	@echo ">> ============= List Dependencies ============= <<"
-	$(GO) list -m all
+	$(go) list -m all
 	@echo ">> ============= Verify Dependencies ============= <<"
-	$(GO) mod verify
+	$(go) mod verify
 
 
 ## format: Format the code.
 .PHONY: format
 format:
 	@echo ">> ============= Formatting Code ============= <<"
-	$(GO) fmt $(pkgs)
+	$(go) fmt $(pkgs)
 
 
 ## vet: Examines source code and reports suspicious constructs.
 .PHONY: vet
 vet:
 	@echo ">> ============= Vetting Code ============= <<"
-	$(GO) vet $(pkgs)
+	$(go) vet $(pkgs)
 
 
 ## coverage: Create HTML coverage report
@@ -106,7 +105,7 @@ vet:
 coverage:
 	@echo ">> ============= Coverage ============= <<"
 	rm -f coverage.html cover.out
-	$(GO) test -mod=readonly -coverprofile=cover.out $(pkgs)
+	$(go) test -mod=readonly -coverprofile=cover.out $(pkgs)
 	go tool cover -html=cover.out -o coverage.html
 
 
@@ -114,35 +113,35 @@ coverage:
 .PHONY: serve_ui
 serve_ui:
 	@echo ">> ============= Run Vuejs App ============= <<"
-	cd web;$(NPM) run serve
+	cd web;$(npm) run serve
 
 
 ## build_ui: Builds admin dashboard for production
 .PHONY: build_ui
 build_ui:
 	@echo ">> ============= Build Vuejs App ============= <<"
-	cd web;$(NPM) run build
+	cd web;$(npm) install;$(npm) run build
 
 
 ## check_ui_format: Check dashboard code format
 .PHONY: check_ui_format
 check_ui_format:
 	@echo ">> ============= Validate js format ============= <<"
-	cd web;$(NPX) prettier  --check .
+	cd web;$(npx) prettier  --check .
 
 
 ## format_ui: Format dashboard code
 .PHONY: format_ui
 format_ui:
 	@echo ">> ============= Format js Code ============= <<"
-	cd web;$(NPX) prettier  --write .
+	cd web;$(npx) prettier  --write .
 
 
 ## api_mock: API mock server
 .PHONY: api_mock
 api_mock:
 	@echo ">> ============= Mock Server ============= <<"
-	$(RHINO) serve -c mocks/.rhino.json
+	$(rhino) serve -c mocks/.rhino.json
 
 
 ## package: Package assets
@@ -151,23 +150,21 @@ package:
 	@echo ">> ============= Package Assets ============= <<"
 	-rm $(shell pwd)/web/.env
 	echo "VUE_APP_TOWER_URL=" > $(shell pwd)/web/.env.dist
-	cd web;$(NPM) run build
-	$(PKGER) list -include $(shell pwd)/web/dist
-	$(PKGER) -o cmd
+	cd web;$(npm) run build
 
 
 ## run_tower: Run the tower
 .PHONY: run_tower
 run_tower:
 	@echo ">> ============= Run Tower ============= <<"
-	$(GO) run walrus.go tower -c config.dist.yml
+	$(go) run walrus.go tower -c config.dist.yml
 
 
 ## run_agent: Run the agent
 .PHONY: run_agent
 run_agent:
 	@echo ">> ============= Run Agent ============= <<"
-	$(GO) run walrus.go agent -c config.dist.yml
+	$(go) run walrus.go agent -c config.dist.yml
 
 
 ## ci: Run all CI tests.

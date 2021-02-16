@@ -291,7 +291,7 @@
 
 <script>
 export default {
-	name: "host",
+	name: "HostPage",
 
 	data() {
 		return {

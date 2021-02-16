@@ -38,7 +38,7 @@
 
 <script>
 export default {
-	name: "settings",
+	name: "SettingsPage",
 
 	data() {
 		return {

@@ -73,7 +73,7 @@
 
 <script>
 export default {
-	name: "login",
+	name: "LoginPage",
 
 	data() {
 		return {

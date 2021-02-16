@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -21,7 +22,6 @@ import (
 
 	"github.com/drone/envsubst"
 	"github.com/gin-gonic/gin"
-	"github.com/markbates/pkger"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -140,7 +140,6 @@ var towerCmd = &cobra.Command{
 			c.String(http.StatusNoContent, "")
 		})
 
-		r.GET("/", tower.Home)
 		r.GET("/_health", tower.Health)
 		r.GET("/_ready", tower.Ready)
 
@@ -148,8 +147,6 @@ var towerCmd = &cobra.Command{
 			viper.GetString(fmt.Sprintf("%s.metrics.prometheus.endpoint", viper.GetString("role"))),
 			gin.WrapH(tower.Metrics()),
 		)
-
-		r.NoRoute(gin.WrapH(http.FileServer(pkger.Dir("/web/dist"))))
 
 		action := r.Group("/action")
 		{
@@ -187,6 +184,19 @@ var towerCmd = &cobra.Command{
 			apiv1.POST("/action/agent_heartbeat", tower.AgentHeartbeat)
 			apiv1.POST("/action/agent_postback", tower.AgentPostback)
 		}
+
+		dist, err := fs.Sub(Static, "web/dist")
+
+		if err != nil {
+			panic(fmt.Sprintf(
+				"Error while accessing dist files: %s",
+				err.Error(),
+			))
+		}
+
+		staticServer := http.StripPrefix("/", http.FileServer(http.FS(dist)))
+
+		r.NoRoute(gin.WrapH(staticServer))
 
 		go workers.BroadcastRequests()
 		go workers.NotifyTower(workers.HandleWorkload())

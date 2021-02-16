@@ -1,26 +1,43 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/gopher.png" width="230" />
+    <img src="/static/gopher.png" width="230" />
     <h3 align="center">Walrus</h3>
     <p align="center">Fast, Secure and Reliable System Backup, Set up in Minutes.</p>
     <p align="center">
-        <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Build/badge.svg"></a>
-        <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg"></a>
-        <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-1.1.0-red.svg"></a>
-        <a href="https://goreportcard.com/report/github.com/Clivern/Walrus"><img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=1.1.0"></a>
-        <a href="https://godoc.org/github.com/clivern/walrus"><img src="https://godoc.org/github.com/clivern/walrus?status.svg"></a>
-        <a href="https://hub.docker.com/r/clivern/walrus"><img src="https://img.shields.io/badge/Docker-Latest-green"></a>
-        <a href="https://github.com/Clivern/Walrus/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg"></a>
+        <a href="https://github.com/Clivern/Walrus/actions/workflows/api.yml">
+            <img src="https://github.com/Clivern/Walrus/actions/workflows/api.yml/badge.svg">
+        </a>
+        <a href="https://github.com/Clivern/Walrus/actions/workflows/ui.yml">
+            <img src="https://github.com/Clivern/Walrus/actions/workflows/ui.yml/badge.svg">
+        </a>
+        <a href="https://github.com/Clivern/Walrus/actions">
+            <img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg">
+        </a>
+        <a href="https://github.com/Clivern/Walrus/releases">
+            <img src="https://img.shields.io/badge/Version-1.1.0-red.svg">
+        </a>
+        <a href="https://goreportcard.com/report/github.com/Clivern/Walrus">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=1.1.0">
+        </a>
+        <a href="https://godoc.org/github.com/clivern/walrus">
+            <img src="https://godoc.org/github.com/clivern/walrus?status.svg">
+        </a>
+        <a href="https://hub.docker.com/r/clivern/walrus">
+            <img src="https://img.shields.io/badge/Docker-Latest-green">
+        </a>
+        <a href="https://github.com/Clivern/Walrus/blob/master/LICENSE">
+            <img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg">
+        </a>
     </p>
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/chart.png?v=1.1.0" width="80%" />
+    <img src="/static/chart.png?v=1.1.0" width="80%" />
 </p>
 <p align="center">
     <h3 align="center">Dashboard Screenshots</h3>
     <p align="center">
-        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_02.png?v=1.1.0" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Walrus/main/assets/screenshot_03.png?v=1.1.0" width="90%" />
+        <img src="/static/screenshot_02.png?v=1.1.0" width="90%" />
+        <img src="/static/screenshot_03.png?v=1.1.0" width="90%" />
     </p>
 </p>
 
@@ -217,9 +234,7 @@ $ make serve_ui
 # Build Vuejs app
 $ make build_ui
 
-# Any changes to the dashboard, must be reflected to cmd/pkged.go
-# You can use these commands to do so
-$ go get github.com/markbates/pkger/cmd/pkger
+# Package the Vuejs app
 $ make package
 ```
 

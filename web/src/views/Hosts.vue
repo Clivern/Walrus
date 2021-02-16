@@ -64,7 +64,7 @@
 
 <script>
 export default {
-	name: "hosts",
+	name: "HostsPage",
 
 	data() {
 		return {
