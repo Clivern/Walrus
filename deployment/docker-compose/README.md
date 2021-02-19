@@ -34,7 +34,7 @@ $ curl https://ipinfo.io/ip
 In the host where backups have to take place, download walrus binary.
 
 ```bash
-$ curl -sL https://github.com/Clivern/Walrus/releases/download/v0.1.6/walrus_0.1.6_Linux_x86_64.tar.gz | tar xz
+$ curl -sL https://github.com/Clivern/Walrus/releases/download/v0.1.7/walrus_0.1.7_Linux_x86_64.tar.gz | tar xz
 ```
 
 Create agent config file. Don't forget to replace `agent.tower` configs with the `tower URL`, `apiKey` and `encryptionKey`, you can get these values from tower configs you created earlier.
