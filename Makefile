@@ -39,12 +39,12 @@ style:
 check_license:
 	@echo ">> ============= Checking License Header ============= <<"
 	@licRes=$$(for file in $$(find . -type f -iname '*.go' ! -path './vendor/*') ; do \
-               awk 'NR<=3' $$file | grep -Eq "(Copyright|generated|GENERATED)" || echo $$file; \
-       done); \
-       if [ -n "$${licRes}" ]; then \
-               echo "license header checking failed:"; echo "$${licRes}"; \
-               exit 1; \
-       fi
+			   awk 'NR<=3' $$file | grep -Eq "(Copyright|generated|GENERATED)" || echo $$file; \
+	   done); \
+	   if [ -n "$${licRes}" ]; then \
+			   echo "license header checking failed:"; echo "$${licRes}"; \
+			   exit 1; \
+	   fi
 
 
 ## test_short: Run test cases with short flag.
@@ -52,7 +52,7 @@ check_license:
 test_short:
 	@echo ">> ============= Running Short Tests ============= <<"
 	$(GO) clean -testcache
-	$(GO) test -short $(pkgs)
+	$(GO) test -mod=mod -short $(pkgs)
 
 
 ## test: Run test cases.
@@ -60,7 +60,7 @@ test_short:
 test:
 	@echo ">> ============= Running All Tests ============= <<"
 	$(GO) clean -testcache
-	$(GO) test -tags=unit -v -cover $(pkgs)
+	$(GO) test -mod=mod -tags=unit -v -cover $(pkgs)
 
 
 ## integration: Run integration test cases (Requires etcd)
@@ -68,7 +68,7 @@ test:
 integration:
 	@echo ">> ============= Running All Tests ============= <<"
 	$(GO) clean -testcache
-	$(GO) test -tags=integration -v -cover $(pkgs)
+	$(GO) test -mod=mod -tags=integration -v -cover $(pkgs)
 
 
 ## lint: Lint the code.
@@ -106,7 +106,7 @@ vet:
 coverage:
 	@echo ">> ============= Coverage ============= <<"
 	rm -f coverage.html cover.out
-	$(GO) test -coverprofile=cover.out $(pkgs)
+	$(GO) test -mod=mod -coverprofile=cover.out $(pkgs)
 	go tool cover -html=cover.out -o coverage.html
 
 
