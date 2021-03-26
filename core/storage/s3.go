@@ -30,9 +30,10 @@ type S3 struct {
 func NewS3Client(key, secret, endpoint, region string) *S3 {
 	return &S3{
 		config: &aws.Config{
-			Credentials: credentials.NewStaticCredentials(key, secret, ""),
-			Endpoint:    aws.String(endpoint),
-			Region:      aws.String(region),
+			Credentials:      credentials.NewStaticCredentials(key, secret, ""),
+			Endpoint:         aws.String(endpoint),
+			Region:           aws.String(region),
+			S3ForcePathStyle: aws.Bool(true),
 		},
 	}
 }
