@@ -3,7 +3,7 @@ module github.com/clivern/walrus
 go 1.16
 
 require (
-	github.com/aws/aws-sdk-go v1.38.7
+	github.com/aws/aws-sdk-go v1.38.8
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/drone/envsubst v1.0.2
 	github.com/franela/goblin v0.0.0-20210113153425-413781f5e6c8
