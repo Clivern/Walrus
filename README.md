@@ -195,6 +195,18 @@ Then you can either build or run the dashboard
 # Install npm packages
 $ cd web
 $ npm install
+$ npm install -g npx
+
+# Add tower url to frontend
+$ echo "VUE_APP_TOWER_URL=http://127.0.0.1:8000" > .env
+
+$ cd ..
+
+# Validate js code format
+$ make check_ui_format
+
+# Format UI
+$ make format_ui
 
 # Run Vuejs app
 $ make serve_ui
