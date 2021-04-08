@@ -7,7 +7,7 @@ require (
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/drone/envsubst v1.0.2
 	github.com/franela/goblin v0.0.0-20210113153425-413781f5e6c8
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/markbates/pkger v0.17.1
 	github.com/prometheus/client_golang v1.10.0
 	github.com/satori/go.uuid v1.2.0
