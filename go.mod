@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.38.42
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/drone/envsubst v1.0.2
-	github.com/franela/goblin v0.0.0-20210113153425-413781f5e6c8
+	github.com/franela/goblin v0.0.0-20210519012713-85d372ac71e2
 	github.com/gin-gonic/gin v1.7.1
 	github.com/markbates/pkger v0.17.1
 	github.com/prometheus/client_golang v1.10.0
