@@ -62,6 +62,7 @@ const (
 type Request struct {
 	Type          string `json:"type"` // @BackupSQLite, @BackupMySQL, @BackupDirectory, @BackupRedis, @BackupPostgreSQL
 	Directory     string `json:"directory"`
+	BeforeScript  string `json:"beforeScript"`
 	RetentionDays int    `json:"retentionDays"`
 
 	MySQLHost         string `json:"mysqlHost"`

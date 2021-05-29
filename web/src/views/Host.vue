@@ -133,6 +133,15 @@
 							</b-select>
 						</b-field>
 
+                        <b-field label="Run Script Before">
+                            <b-input
+                                type="text"
+                                v-model="form.beforeScript"
+                                placeholder="/usr/bin/innobackupex --incremental"
+                            >
+                            </b-input>
+                        </b-field>
+
 						<template v-if="form.type == '@BackupDirectory'">
 							<b-field label="Directory Path">
 								<b-input
@@ -301,6 +310,7 @@ export default {
 				name: "",
 				interval: 30,
 				retention: 10,
+				beforeScript: "",
 				directory: "",
 
 				mysqlHost: "127.0.0.1",
@@ -411,6 +421,7 @@ export default {
 			this.form.interval = 30;
 			this.form.retention = 10;
 			this.form.directory = "";
+			this.form.beforeScript = "";
 			this.form.intervalType = "@minute";
 			this.form.type = "@BackupDirectory";
 			this.form.hostId = hostId;
@@ -430,6 +441,7 @@ export default {
 							this.form.name = data.name;
 							this.form.interval = data.interval;
 							this.form.retention = data.request.retentionDays;
+							this.form.beforeScript = data.request.beforeScript;
 							this.form.directory = data.request.directory;
 
 							this.form.mysqlHost = data.request.mysqlHost;
@@ -469,6 +481,7 @@ export default {
 			this.form.interval = 30;
 			this.form.retention = 10;
 			this.form.directory = "";
+			this.form.beforeScript = "";
 			this.form.intervalType = "@minute";
 			this.form.type = "@BackupDirectory";
 			this.form.hostId = hostId;
@@ -494,6 +507,7 @@ export default {
 			this.form.interval = 30;
 			this.form.retention = 10;
 			this.form.directory = "";
+			this.form.beforeScript = "";
 			this.form.intervalType = "@minute";
 			this.form.type = "@BackupDirectory";
 			this.form.hostId = "";
@@ -526,6 +540,7 @@ export default {
 					name: this.form.name,
 					interval: this.form.interval.toString(),
 					retention: this.form.retention.toString(),
+					beforeScript: this.form.beforeScript,
 					directory: this.form.directory,
 					intervalType: this.form.intervalType,
 

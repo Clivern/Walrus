@@ -6,6 +6,8 @@ package backup
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 	"time"
 
 	"github.com/clivern/walrus/core/model"
@@ -42,6 +44,19 @@ func (m *Manager) ProcessBackup(message module.BackupMessage) error {
 		message.Cron.ID,
 		fileName,
 	)
+
+	if message.Cron.Request.BeforeScript != "" {
+
+		cmd := exec.Command("sh", "-c", message.Cron.Request.BeforeScript)
+
+		cmd.Stdin = os.Stdin
+		// cmd.Stdout = os.Stdout
+		// cmd.Stderr = os.Stderr
+		err := cmd.Run()
+		if err != nil {
+			return err
+		}
+	}
 
 	// BackupDirectory
 	if message.Cron.Request.Type == model.BackupDirectory {
