@@ -6,8 +6,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         go: ['1.13', '1.14', '1.15', '1.16']
     name: Go ${{ matrix.go }} run
@@ -30,6 +31,7 @@ jobs:
       - name: Run make ci
         run: |
           export PATH=${PATH}:`go env GOPATH`/bin
+          go get -t .
           make ci
           make integration
           make integration
