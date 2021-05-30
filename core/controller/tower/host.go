@@ -276,6 +276,7 @@ func CreateHostCron(c *gin.Context) {
 		Request: model.Request{
 			Type:          inputs["type"],
 			Directory:     inputs["directory"],
+			BeforeScript:  inputs["beforeScript"],
 			RetentionDays: retention,
 
 			// MySQL
@@ -382,6 +383,7 @@ func UpdateHostCron(c *gin.Context) {
 
 	cronData.Name = inputs["name"]
 	cronData.Request.Directory = inputs["directory"]
+	cronData.Request.BeforeScript = inputs["beforeScript"]
 	cronData.Request.RetentionDays = retention
 	cronData.Request.Type = inputs["type"]
 
@@ -520,6 +522,7 @@ func GetHostCron(c *gin.Context) {
 		"request": gin.H{
 			"type":          cronData.Request.Type,
 			"directory":     cronData.Request.Directory,
+			"beforeScript":  cronData.Request.BeforeScript,
 			"retentionDays": cronData.Request.RetentionDays,
 
 			// MySQL
