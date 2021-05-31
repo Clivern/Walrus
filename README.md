@@ -33,7 +33,9 @@ Walrus is a fast, secure and reliable backup system suitable for modern infrastr
 Download [the latest walrus binary](https://github.com/Clivern/Walrus/releases). Make it executable from everywhere.
 
 ```zsh
-$ curl -sL https://github.com/Clivern/Walrus/releases/download/vx.x.x/walrus_x.x.x_OS.tar.gz | tar xz
+$ export WALRUS_LATEST_VERSION=$(curl --silent "https://api.github.com/repos/Clivern/Walrus/releases/latest" | jq '.tag_name' | sed -E 's/.*"([^"]+)".*/\1/' | tr -d v)
+
+$ curl -sL https://github.com/Clivern/Walrus/releases/download/v{$WALRUS_LATEST_VERSION}/walrus_{$WALRUS_LATEST_VERSION}_Linux_x86_64.tar.gz | tar xz
 ```
 
 Then install etcd cluster or single node, please refer to etcd docs or bin directory inside this repository.
