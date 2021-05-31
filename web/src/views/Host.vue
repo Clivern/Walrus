@@ -133,14 +133,14 @@
 							</b-select>
 						</b-field>
 
-                        <b-field label="Run Script Before">
-                            <b-input
-                                type="text"
-                                v-model="form.beforeScript"
-                                placeholder="/usr/bin/innobackupex --incremental"
-                            >
-                            </b-input>
-                        </b-field>
+						<b-field label="Run Script Before">
+							<b-input
+								type="text"
+								v-model="form.beforeScript"
+								placeholder="/usr/bin/innobackupex --incremental"
+							>
+							</b-input>
+						</b-field>
 
 						<template v-if="form.type == '@BackupDirectory'">
 							<b-field label="Directory Path">

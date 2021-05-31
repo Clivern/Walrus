@@ -7,6 +7,7 @@
         <a href="https://github.com/Clivern/Walrus/actions"><img src="https://github.com/Clivern/Walrus/workflows/Release/badge.svg"></a>
         <a href="https://github.com/Clivern/Walrus/releases"><img src="https://img.shields.io/badge/Version-1.1.0-red.svg"></a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Walrus"><img src="https://goreportcard.com/badge/github.com/Clivern/Walrus?v=1.1.0"></a>
+        <a href="https://godoc.org/github.com/clivern/walrus"><img src="https://godoc.org/github.com/clivern/walrus?status.svg"></a>
         <a href="https://hub.docker.com/r/clivern/walrus"><img src="https://img.shields.io/badge/Docker-Latest-green"></a>
         <a href="https://github.com/Clivern/Walrus/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg"></a>
     </p>
