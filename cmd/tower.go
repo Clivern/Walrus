@@ -69,7 +69,7 @@ var towerCmd = &cobra.Command{
 			dir, _ := filepath.Split(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
 
 			if !util.DirExists(dir) {
-				if _, err := util.EnsureDir(dir, 775); err != nil {
+				if _, err := util.EnsureDir(dir, 0775); err != nil {
 					panic(fmt.Sprintf(
 						"Directory [%s] creation failed with error: %s",
 						dir,
@@ -95,7 +95,12 @@ var towerCmd = &cobra.Command{
 			gin.DefaultWriter = os.Stdout
 			log.SetOutput(os.Stdout)
 		} else {
-			f, _ := os.Create(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
+			f, _ := os.OpenFile(
+				viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))),
+				os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+				0775,
+			)
+
 			gin.DefaultWriter = io.MultiWriter(f)
 			log.SetOutput(f)
 		}

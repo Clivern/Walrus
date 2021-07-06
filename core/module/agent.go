@@ -47,12 +47,13 @@ func NewAgent(httpClient *service.HTTPClient) *Agent {
 // In order to register an agent, agent do a request to tower with the following specs
 //
 // POST: config(agent.tower.url)/api/v1/action/register_agent
-// {
-//     "agentURL": "config(agent.url)"
-//     "agentID": "$$",
-//     "hostname": "$$"
-//     "agentApiKey": "$$"
-// }
+//
+//	{
+//	    "agentURL": "config(agent.url)"
+//	    "agentID": "$$",
+//	    "hostname": "$$"
+//	    "agentApiKey": "$$"
+//	}
 //
 // Headers
 // X-Encrypted-Request: true
@@ -117,11 +118,12 @@ func (a *Agent) Bootstrap() error {
 // Heartbeat notify the tower that agent is a live
 //
 // POST: config(agent.tower.url)/api/v1/action/agent_heartbeat
-// {
-//     "status": "up",
-//     "agentID": "$$",
-//     "hostname": "$$"
-// }
+//
+//	{
+//	    "status": "up",
+//	    "agentID": "$$",
+//	    "hostname": "$$"
+//	}
 //
 // Headers
 // X-Encrypted-Request: true

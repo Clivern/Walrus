@@ -96,7 +96,12 @@ var agentCmd = &cobra.Command{
 			gin.DefaultWriter = os.Stdout
 			log.SetOutput(os.Stdout)
 		} else {
-			f, _ := os.Create(viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))))
+			f, _ := os.OpenFile(
+				viper.GetString(fmt.Sprintf("%s.log.output", viper.GetString("role"))),
+				os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+				0775,
+			)
+
 			gin.DefaultWriter = io.MultiWriter(f)
 			log.SetOutput(f)
 		}
