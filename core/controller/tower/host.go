@@ -131,7 +131,7 @@ func GetHost(c *gin.Context) {
 	if err != nil && strings.Contains(err.Error(), "Unable to find") {
 		c.JSON(http.StatusNotFound, gin.H{
 			"correlationID": c.GetHeader("x-correlation-id"),
-			"errorMessage":  fmt.Sprintf("Unable to fine host: %s", hostname),
+			"errorMessage":  fmt.Sprintf("Unable to find host: %s", hostname),
 		})
 		return
 	}
@@ -360,7 +360,7 @@ func UpdateHostCron(c *gin.Context) {
 	if err != nil && strings.Contains(err.Error(), "Unable to find") {
 		c.JSON(http.StatusNotFound, gin.H{
 			"correlationID": c.GetHeader("x-correlation-id"),
-			"errorMessage":  fmt.Sprintf("Unable to fine host: %s", hostname),
+			"errorMessage":  fmt.Sprintf("Unable to find host: %s", hostname),
 		})
 		return
 	}
@@ -495,7 +495,7 @@ func GetHostCron(c *gin.Context) {
 	if err != nil && strings.Contains(err.Error(), "Unable to find") {
 		c.JSON(http.StatusNotFound, gin.H{
 			"correlationID": c.GetHeader("x-correlation-id"),
-			"errorMessage":  fmt.Sprintf("Unable to fine host: %s", hostname),
+			"errorMessage":  fmt.Sprintf("Unable to find host: %s", hostname),
 		})
 		return
 	}
