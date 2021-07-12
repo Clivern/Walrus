@@ -94,7 +94,7 @@ func GetHostJob(c *gin.Context) {
 	if err != nil && strings.Contains(err.Error(), "Unable to find") {
 		c.JSON(http.StatusNotFound, gin.H{
 			"correlationID": c.GetHeader("x-correlation-id"),
-			"errorMessage":  fmt.Sprintf("Unable to fine job: %s", jobID),
+			"errorMessage":  fmt.Sprintf("Unable to find job: %s", jobID),
 		})
 		return
 	}
@@ -168,7 +168,7 @@ func UpdateHostJob(c *gin.Context) {
 	if err != nil && strings.Contains(err.Error(), "Unable to find") {
 		c.JSON(http.StatusNotFound, gin.H{
 			"correlationID": c.GetHeader("x-correlation-id"),
-			"errorMessage":  fmt.Sprintf("Unable to fine host: %s", hostname),
+			"errorMessage":  fmt.Sprintf("Unable to find host: %s", hostname),
 		})
 		return
 	}
