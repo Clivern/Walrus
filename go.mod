@@ -18,6 +18,6 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
 	go.etcd.io/etcd v3.3.25+incompatible
-	golang.org/x/crypto v0.0.0-20210812204632-0ba0e8f03122
+	golang.org/x/crypto v0.0.0-20210813211128-0a44fdfbc16e
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
