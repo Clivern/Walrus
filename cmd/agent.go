@@ -53,7 +53,7 @@ var agentCmd = &cobra.Command{
 		}
 
 		viper.SetConfigType("yaml")
-		err = viper.ReadConfig(bytes.NewBuffer([]byte(configParsed)))
+		err = viper.ReadConfig(bytes.NewBufferString(configParsed))
 
 		if err != nil {
 			panic(fmt.Sprintf(
