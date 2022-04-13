@@ -5,6 +5,8 @@ go 1.16
 require (
 	github.com/aws/aws-sdk-go v1.43.37
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
+	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf // indirect
+	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/drone/envsubst v1.0.3
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf
@@ -15,8 +17,8 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.7.0
+	github.com/spf13/viper v1.11.0
+	github.com/stretchr/testify v1.7.1
 	go.etcd.io/etcd v3.3.27+incompatible
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	sigs.k8s.io/yaml v1.2.0 // indirect
