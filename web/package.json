@@ -11,9 +11,9 @@
 		"axios": "^0.21.4",
 		"buefy": "0.9.7",
 		"core-js": "3.13.0",
-		"vue": "2.6.12",
+		"vue": "2.6.14",
 		"vue-router": "3.4.9",
-		"vuex": "3.5.1"
+		"vuex": "3.6.2"
 	},
 	"devDependencies": {
 		"@vue/cli-plugin-babel": "^5.0.6",
@@ -24,7 +24,7 @@
 		"eslint": "7.18.0",
 		"eslint-plugin-vue": "6.2.2",
 		"prettier": "2.3.0",
-		"vue-template-compiler": "2.6.12"
+		"vue-template-compiler": "2.6.14"
 	},
 	"eslintConfig": {
 		"root": true,
