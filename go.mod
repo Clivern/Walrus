@@ -16,7 +16,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.7.4
+	github.com/stretchr/testify v1.7.5
 	go.etcd.io/etcd v3.3.27+incompatible
 	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898
 	sigs.k8s.io/yaml v1.2.0 // indirect
