@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: "actions/checkout@master"
       - name: "TODO to Issue"
-        uses: alstr/todo-to-issue-action@v4.6.6
+        uses: alstr/todo-to-issue-action@v4.6.7
         id: "todo"
         with:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
