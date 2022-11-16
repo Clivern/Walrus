@@ -14,7 +14,7 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	go.etcd.io/etcd/client/v3 v3.5.5
-	golang.org/x/crypto v0.2.0
+	golang.org/x/crypto v0.3.0
 )
 
 require (
