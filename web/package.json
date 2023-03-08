@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"axios": "0.27.2",
-		"buefy": "0.9.22",
+		"buefy": "0.9.23",
 		"core-js": "3.29.0",
 		"vue": "2.7.14",
 		"vue-router": "3.6.5",
