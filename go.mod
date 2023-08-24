@@ -3,7 +3,7 @@ module github.com/clivern/walrus
 go 1.20
 
 require (
-	github.com/aws/aws-sdk-go v1.44.330
+	github.com/aws/aws-sdk-go v1.44.331
 	github.com/drone/envsubst v1.0.3
 	github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf
 	github.com/gin-gonic/gin v1.9.1
